@@ -1,0 +1,164 @@
+Les colonnes des tableaux sont les suivantes : 
+
+
+NUM_POSTE   : numÃ©ro MÃ©tÃ©o-France du poste sur 8 chiffres
+NOM_USUEL   : nom usuel du poste
+LAT         : latitude, nÃ©gative au sud (en degrÃ©s et millioniÃ¨mes de degrÃ©)
+LON         : longitude, nÃ©gative Ã  lâ€™ouest de GREENWICH (en degrÃ©s et millioniÃ¨mes de degrÃ©)
+ALTI        : altitude du pied de l'abri ou du pluviomÃ¨tre si pas d'abri (en m)
+AAAAMMJJHH  : date de la mesure (annÃ©e mois jour heure)
+RR1         : quantitÃ© de prÃ©cipitation tombÃ©e en 1 heure (en mm et 1/10 mm)
+DRR1        : durÃ©e des prÃ©cipitations (en mn)
+FF          : force du vent moyennÃ© sur 10 mn, mesurÃ©e Ã  10 m (en m/s et 1/10)
+DD          : direction de FF (en rose de 360)
+FXY         : valeur maximale de FF dans lâ€™heure (en m/s et 1/10)
+DXY         : direction de FXY (rose de 360)
+HXY         : heure de FXY (hhmm)
+FXI         : force maximale du vent instantanÃ© dans lâ€™heure, mesurÃ©e Ã  10 m (en m/s et 1/10)
+DXI         : direction de FXI (en rose de 360)
+HXI         : heure de FXI (hhmm)
+FF2         : force du vent moyennÃ© sur 10 mn, mesurÃ©e Ã  2 m (en m/s et 1/10)
+DD2         : direction de FF2 (en rose de 360)
+FXI2        : force maximale du vent instantanÃ© dans lâ€™heure, mesurÃ©e Ã  2 m (en m/s et 1/10)
+DXI2        : direction de FXI2 (en rose de 360)
+HXI2        : heure de FXI2 (hhmm)
+FXI3S       : force maximale du vent moyennÃ© sur 3 secondes dans lâ€™heure (en m/s et 1/10)
+DXI3S       : direction de FXI3S (en rose de 360)
+HXI3S       : heure de FXI3S (hhmm)
+T           : tempÃ©rature sous abri instantanÃ©e (en Â°C et 1/10)
+TD          : tempÃ©rature du point de rosÃ©e (en Â°C et 1/10)
+TN          : tempÃ©rature minimale sous abri dans lâ€™heure (en Â°C et 1/10)
+HTN         : heure de TN (hhmm)
+TX          : tempÃ©rature maximale sous abri dans lâ€™heure (en Â°C et 1/10)
+HTX         : heure de TX (hhmm)
+DG          : durÃ©e de gel sous abri (T â‰¤ 0Â°C) (en mn)
+T10         : tempÃ©rature Ã  10 cm au-dessous du sol (en Â°C et 1/10), nâ€™existe pas pour les sÃ©maphores
+T20         : tempÃ©rature Ã  20 cm au-dessous du sol (en Â°C et 1/10), nâ€™existe pas pour les sÃ©maphores
+T50         : tempÃ©rature Ã  50 cm au-dessous du sol (en Â°C et 1/10), nâ€™existe pas pour les sÃ©maphores
+T100        : tempÃ©rature Ã  1 m au-dessous du sol (en Â°C et 1/10), nâ€™existe pas pour les sÃ©maphores
+TNSOL       : tempÃ©rature minimale Ã  10 cm au-dessus du sol (en Â°C et 1/10)
+TN50        : tempÃ©rature minimale Ã  50 cm au-dessus du sol (en Â°C et 1/10)
+TCHAUSSEE   : tempÃ©rature de surface mesurÃ©e sur herbe ou sur bitume (en Â°C et 1/10)
+DHUMEC      : durÃ©e dâ€™humectation (en mn)
+U           : humiditÃ© relative (en %)
+UN          : humiditÃ© relative minimale dans lâ€™heure (en %)
+HUN         : heure de UN (hhmm)
+UX          : humiditÃ© relative maximale dans lâ€™heure (en %)
+HUX         : heure de UX (hhmm)
+DHUMI40     : durÃ©e avec humiditÃ© â‰¤ 40% (en mn)
+DHUMI80     : durÃ©e avec humiditÃ© â‰¥ 80% (en mn)
+TSV         : tension de vapeur (en hPa et 1/10)
+PMER        : pression mer, seulement pour les postes dont lâ€™altitude est infÃ©rieure ou Ã©gale Ã  750 m (en hPa et 1/10)
+PSTAT       : pression station (en hPa et 1/10)
+PMERMIN     : minimum horaire de la pression mer (en hPa et 1/10)
+GEOP        : gÃ©opotentiel, seulement pour les stations dont lâ€™altitude est supÃ©rieure Ã  750 m (en mgp)
+N           : nÃ©bulositÃ© totale (en octa), 9=ciel invisible par brouillard et/ou autre phÃ©nomÃ¨ne mÃ©tÃ©orologique
+NBAS        : nÃ©bulositÃ© de la couche nuageuse principale la plus basse (en octa)
+CL          : code SYNOP nuages bas (v. Atlas international des nuages (OMM-NÂ°407), Volume I, Classification des nuages)
+CM          : code SYNOP nuages moyens (v. Atlas international des nuages (OMM-NÂ°407), Volume I, Classification des nuages)
+CH          : code SYNOP nuages Ã©levÃ©s (v. Atlas international des nuages (OMM-NÂ°407), Volume I, Classification des nuages)
+N1          : nÃ©bulositÃ© de la 1Ã¨re couche nuageuse (en octa)
+C1          : genre de la 1Ã¨re couche nuageuse
+B1          : base de la 1Ã¨re couche nuageuse (en m)
+N2          : nÃ©bulositÃ© de la 2Ã¨me couche nuageuse (en octa)
+C2          : genre de la 2Ã¨me couche nuageuse
+B2          : base de la 2Ã¨me couche nuageuse (en m)
+N3          : nÃ©bulositÃ© de la 3Ã¨me couche nuageuse (en octa)
+C3          : genre de la 3Ã¨me couche nuageuse
+B3          : base de la 3Ã¨me couche nuageuse (en m)
+N4          : nÃ©bulositÃ© de la 4Ã¨me couche nuageuse (en octa)
+C4          : genre de la 4Ã¨me couche nuageuse
+B4          : base de la 4Ã¨me couche nuageuse (en m)
+VV          : visibilitÃ© (en m)
+"DVV200      : durÃ©e avec visibilitÃ© < 200 m (en mn)	"
+WW          : code descriptif du temps prÃ©sent (WMO Manuel des codes, Volume I.1, Section C-b, table 4677)
+W1          : code descriptif du temps passÃ© 1 (WMO Manuel des codes, Volume I.1, Section C-b, table 4687)
+W2          : code descriptif du temps passÃ© 2 (WMO Manuel des codes, Volume I.1, Section C-b, table 4687)
+SOL         : Ã©tat du sol sans neige : 
+   0 | surface du sol sÃ¨che (sans fissure et sans poussiÃ¨re ni sable meuble en quantitÃ© apprÃ©ciable)
+   1 | surface du sol humide
+   2 | surface du sol mouillÃ©e (eau stagnante en mares, petites ou grandes, Ã  la surface)
+   3 | inondÃ©
+   4 | surface du sol gelÃ©e
+   5 | verglas au sol
+   6 | poussiÃ¨re ou sable meuble sec ne couvrant pas complÃ¨tement le sol
+   7 | couche fine de poussiÃ¨re ou de sable meuble couvrant complÃ¨tement le sol
+   8 | couche Ã©paisse ou d'Ã©paisseur moyenne de poussiÃ¨re ou de sable meuble couvrant complÃ¨tement le sol
+   9 | trÃ¨s sec avec fissures
+SOLNG       : Ã©tat du sol avec neige : 
+   0 | sol en grande partie couvert de glace
+   1 | neige compacte ou mouillÃ©e (avec ou sans glace) couvrant moins de la moitiÃ© du sol
+   2 | neige compacte ou mouillÃ©e (avec ou sans glace) couvrant au moins la moitiÃ© du sol, mais ne le couvrant pas complÃ¨tement
+   3 | couche uniforme de neige compacte ou mouillÃ©e couvrant complÃ¨tement le sol
+   4 | couche non uniforme de neige compacte ou mouillÃ©e couvrant complÃ¨tement le sol
+   5 | neige sÃ¨che poudreuse couvrant moins de la moitiÃ© du sol
+   6 | neige sÃ¨che poudreuse couvrant au moins la moitiÃ© du sol, mais ne le couvrant pas complÃ¨tement
+   7 | couche uniforme de neige sÃ¨che poudreuse couvrant complÃ¨tement le sol
+   8 | couche non uniforme de neige sÃ¨che poudreuse couvrant complÃ¨tement le sol
+   9 | neige couvrant complÃ¨tement le sol
+TMER        : tempÃ©rature de la mer (en Â°C et 1/10)
+VVMER       : visibilitÃ© vers la mer, codÃ©e de 0 Ã  9 :
+   0 | moins de 50 m
+   1 | 50 Ã  200 m exclu
+   2 | 200 Ã  500 m exclu
+   3 | 500 Ã  1000 m exclu
+   4 | 1 Ã  2 km exclu
+   5 | 2 Ã  4 km exclu
+   6 | 4 Ã  10 km exclu
+   7 | 10 Ã  20 km exclu
+   8 | 20 Ã  50 km exclu
+   9 | 50 km ou plus
+"ETATMER     : Ã©tat de la mer pour les sÃ©maphores :		"
+   0 | calme (sans ride)
+   1 | calme (ridÃ©e)
+   2 | belle (vaguelettes)
+   3 | peu agitÃ©e
+   4 | agitÃ©e
+   5 | forte
+   6 | trÃ¨s forte
+   7 | grosse
+   8 | trÃ¨s grosse
+   9 | Ã©norme
+DIRHOULE    : direction de la houle pour les sÃ©maphores et Ã©gale Ã  999 si la direction est variable (rose de 360)
+HVAGUE      : hauteur des vagues, en particulier les bouÃ©es fixes (en m et 1/10)
+PVAGUE      : pÃ©riode des vagues (en s et 1/10)
+HNEIGEF     : hauteur de neige fraÃ®che tombÃ©e en 6h, toujours renseignÃ©e aux heures synoptiques principales (en cm)
+NEIGETOT    : hauteur de neige totale au sol (en cm)
+TSNEIGE     : tempÃ©rature de surface de la neige (en Â°C et 1/10)
+TUBENEIGE   : enfoncement du tube de neige (en cm)
+HNEIGEFI3   : hauteur de neige fraÃ®che tombÃ©e en 3h, facultatif aux heures synoptiques intermÃ©diaires (en cm)
+HNEIGEFI1   : hauteur de neige fraÃ®che tombÃ©e en 1h, facultatif aux heures non synoptiques (en cm)
+ESNEIGE     : code descriptif de lâ€™Ã©tat de la neige pour les postes nivomÃ©tÃ©orologiques :
+   0 | neige fraÃ®che (ou rÃ©cente) sÃ¨che
+   1 | givre de surface
+   2 | neige fraÃ®che (ou rÃ©cente) humide
+   3 | neige soufflÃ©e non portante
+   4 | neige soufflÃ©e portante
+   5 | vieille neige humide portante ou non portante
+   6 | vieille neige sÃ¨che et meuble (non croÃ»tÃ©e, non soufflÃ©e)
+   7 | croÃ»te de regel non portante
+   8 | croÃ»te de regel portante
+   9 | surface lisse et glacÃ©e
+CHARGENEIGE : charge de la neige (en kg/m2)
+GLO         : rayonnement global horaire en heure UTC (en J/cm2)
+GLO2        : rayonnement global horaire en heure TSV (en J/cm2)
+DIR         : rayonnement direct horaire en heure UTC (en J/cm2)
+DIR2        : rayonnement direct horaire en heure TSV (en J/cm2)
+DIF         : rayonnement diffus horaire en heure UTC (en J/cm2)
+DIF2        : rayonnement diffus horaire en heure TSV (en J/cm2)
+UV          : rayonnement ultra-violet horaire en heure UTC (en J/cm2)
+UV2         : rayonnement ultra-violet horaire en heure TSV (en J/cm2)
+UV_INDICE   : indice UV (compris entre 0 et 12)
+INFRAR      : rayonnement infra-rouge horaire en heure UTC (en J/cm2)
+INFRAR2     : rayonnement infra-rouge horaire en heure TSV (en J/cm2)
+INS         : insolation horaire en heure UTC (en mn)
+INS2        : insolation horaire en heure TSV (en mn)
+TLAGON      : tempÃ©rature du lagon (en Â°C et 1/10)
+TVEGETAUX   : tempÃ©rature des vÃ©gÃ©taux (en Â°C et 1/10)
+ECOULEMENT  : niveau dâ€™Ã©coulement
+
+A chaque donnÃ©e est associÃ© un code qualitÃ© (ex: T
+ 9 : donnÃ©e filtrÃ©e (la donnÃ©e a passÃ© les filtres/contrÃ´les de premiers niveaux)
+ 0 : donnÃ©e protÃ©gÃ©e (la donnÃ©e a Ã©tÃ© validÃ©e dÃ©finitivement par le climatologue)
+ 1 : donnÃ©e validÃ©e (la donnÃ©e a Ã©tÃ© validÃ©e par contrÃ´le automatique ou par le climatologue)
+ 2 : donnÃ©e douteuse en cours de vÃ©rification (la donnÃ©e a Ã©tÃ© mise en doute par contrÃ´le automatique)
