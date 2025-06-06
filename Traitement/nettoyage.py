@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 # Conversion des colonnes numériques avec virgules en float
+# x = 1,5   -->   x = 1.5
 def conversion_virgules(df):
     for col in df.columns[2:]:
         df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
@@ -28,4 +29,5 @@ def supprimer_colonnes_constantes(df, seuil_variation=0.1):
         except Exception:
             continue
     df = df.drop(columns=colonnes_a_supprimer)
+    df.reset_index(drop=True, inplace=True)
     return df
