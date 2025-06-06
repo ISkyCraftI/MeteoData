@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import os
 
@@ -71,5 +72,5 @@ if __name__ == "__main__":
     df = supprimer_colonnes_correlees(df, seuil=0.98)
     
     print(f"Dimensions finales corrélées : {df.shape}")
-    # df.to_csv("donnees_meteo_nettoyees.csv", index=False)
-    # print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
+    df.to_csv("donnees_meteo_nettoyees.csv", index=False)
+    print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")

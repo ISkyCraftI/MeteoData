@@ -8,3 +8,16 @@ liens utiles :
 - https://www.data.gouv.fr/fr/datasets/donnees-climatologiques-de-base-horaires/
 
 Un rapport est à rendre le mercredi 18 juin 23h59
+
+1. Nettoyer la BDD
+    a. Effacer les lignes vides (ou <1% qui est rentré)
+    c. Effacer
+2. Calculer des moyennes, médianes, écarts-types
+3. Faire des courbes
+4. Réduire encore les dimensions
+    a. Effacer les lignes avec 98% de corrélation
+    b. Visualiser
+5. Clusters 
+    kmeans = sklearn.cluster.KMeans( params ).fit( X )
+    a. Méthode du coude (voir combien de clusters nécessaires)
+    b. Visualisation du résultat
