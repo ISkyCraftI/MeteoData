@@ -8,7 +8,7 @@ liens utiles :
 - https://www.data.gouv.fr/fr/datasets/donnees-climatologiques-de-base-horaires/
 
 Un rapport est à rendre le mercredi 18 juin 23h59
-
+Plan
 1. Nettoyer la BDD
     a. Effacer les lignes vides (ou <1% qui est rentré)
     c. Effacer
