@@ -18,7 +18,8 @@ def charger_donnees(path_csv):
     df = pd.read_csv(path_csv, sep=';', compression='infer', low_memory=False)
     df.columns = df.columns.str.strip()  # <-- Ajoute cette ligne
     print(f"Dimensions brutes : {df.shape}")
-    return df[:100]
+    # return df[:100]
+    return df
 
 def jeuDeTest():
     fichier = "D29/H_29_2024-2025.csv.gz"
@@ -31,7 +32,8 @@ def jeuDeTest():
 
 # Programme principal
 if __name__ == "__main__":
-    fichier = "jeu_de_test_100.csv"  
+    # fichier = "jeu_de_test_100.csv"  
+    fichier = "D29/H_29_2024-2025.csv.gz"
     df = charger_donnees(fichier)
     print(df.columns.tolist())
     
@@ -49,27 +51,19 @@ if __name__ == "__main__":
     df = nettoyer_lignes(df, seuil=seuil_lignes)
     print(f"Dimensions après nettoyage lignes : {df.shape}")
     
-    df = dateRewrite(df)
+    df = dateRewrite(df)   
     
-    #df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
-    #print(f"Dimensions colonnes peu remplies : {df.shape}")
-    #print(df.columns.tolist())
-    
-    #df = supprimer_colonnes_constantes(df)
-    #print(f"Dimensions finales : {df.shape}")
-    
-    #df = supprimer_colonnes_correlees(df, seuil=0.98)
-    #print(f"Dimensions finales corrélées : {df.shape}")
-    
-    # print(df.columns.tolist())
-    
-    
-    
-    df.to_csv("donnees_meteo_nettoyees.csv", index=False)
-    print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
+    # df.to_csv("donnees_meteo_nettoyees.csv", index=False)
+    # print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
     
     # Affichage des courbes
+
     # boiteAMoustache(df, verbose=True)
     
     correlation(df,seuil_corr=0.5)
+
+    boiteAMoustache(df, verbose=True)
+    
+    NuagePointsTemperature(df)
+
 

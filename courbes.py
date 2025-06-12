@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 def boiteAMoustache(df, verbose=False):
     # Colonnes à exclure manuellement (identifiants, horodatages, etc.)
@@ -29,5 +30,30 @@ def boiteAMoustache(df, verbose=False):
     plt.tight_layout()
     plt.show()
 
+import matplotlib.pyplot as plt
+
 def NuagePointsTemperature(df):
-    col = ['T']
+    # Vérifications préalables
+    if 'AAAAMMJJHH' not in df.columns or 'T' not in df.columns:
+        raise ValueError("Le DataFrame doit contenir les colonnes 'AAAAMMJJHH' et 'T'.")
+
+    # Filtrage des données valides
+    df_plot = df[['AAAAMMJJHH', 'T']].dropna()
+
+    # Conversion de AAAAMMJJHH en datetime si ce n'est pas déjà fait
+    if not pd.api.types.is_datetime64_any_dtype(df_plot['AAAAMMJJHH']):
+        try:
+            df_plot['AAAAMMJJHH'] = pd.to_datetime(df_plot['AAAAMMJJHH'], errors='coerce')
+        except Exception as e:
+            print(f"[ERREUR] Conversion datetime impossible : {e}")
+            return
+
+    # Tracer le nuage de points
+    plt.figure(figsize=(14, 6))
+    plt.scatter(df_plot['AAAAMMJJHH'], df_plot['T'], s=10, alpha=0.6)
+    plt.xlabel("Date")
+    plt.ylabel("Température (°C)")
+    plt.title("Nuage de points : Température en fonction du temps")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
