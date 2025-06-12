@@ -21,3 +21,13 @@ Plan
     kmeans = sklearn.cluster.KMeans( params ).fit( X )
     a. Méthode du coude (voir combien de clusters nécessaires)
     b. Visualisation du résultat
+
+Rapport :
+Pourquoi on fait ça ?
+Conclusion : aggrégation des données
+On compare les 3 départements
+    - Bretagne : Océan Atlantique, climat océanique
+    - Bourgogne : climat continental
+    - Corse : climat méditerranéen
+
+On remarque lorsque le vent vient du nord, il fait plus chaud à Dijon qu'à Brest et Ajaccio (par exemple).
