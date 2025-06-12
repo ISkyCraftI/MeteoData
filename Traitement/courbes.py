@@ -1,21 +1,33 @@
-# Boite à moustaches
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
 
+def boiteAMoustache(df, verbose=False):
+    # Colonnes à exclure manuellement (identifiants, horodatages, etc.)
+    colonnes_exclues = ['NUM_POSTE', 'AAAAMMJJHH']
 
-def boiteAMoustache(df):
-    colonnes_ue = df.columns[2:]
-  
-    moyennes = {col: df[col].mean() for col in colonnes_ue}     # Calcul des moyennes
+    # Sélectionne uniquement les colonnes numériques
+    colonnes_numeriques = df.select_dtypes(include=[np.number]).columns
 
-    colonnes_ue_triees = sorted(moyennes, key=moyennes.get)     # Tri des colonnes par moyenne croissante
+    # Supprime celles à exclure
+    colonnes_utiles = [col for col in colonnes_numeriques if col not in colonnes_exclues]
 
-    data = [df[col].dropna() for col in colonnes_ue_triees]     # Préparer les données dans l'ordre trié
+    if verbose:
+        print(f"[INFO] Colonnes numériques conservées : {colonnes_utiles}")
 
-    # Tracé du graphique
-    plt.figure(figsize=(12, 6))
-    plt.boxplot(data, labels=colonnes_ue_triees, patch_artist=True)
-    plt.title("Boîtes à moustaches des notes par UE (triées par moyenne croissante)")
-    plt.xticks(rotation=45, ha='right')
-    plt.grid(True)
+    # Calcul des moyennes pour tri
+    moyennes = {col: df[col].mean() for col in colonnes_utiles}
+    colonnes_triees = sorted(moyennes, key=moyennes.get)
+
+    # Préparation des données
+    data = [df[col].dropna() for col in colonnes_triees]
+
+    # Affichage
+    plt.figure(figsize=(16, 8))
+    plt.boxplot(data, labels=colonnes_triees, patch_artist=True, vert=False)
+    plt.title("Boîtes à moustaches des variables météo")
+    plt.grid(True, axis='x')
     plt.tight_layout()
     plt.show()
+
+def NuagePointsTemperature(df):
+    col = ['T']
