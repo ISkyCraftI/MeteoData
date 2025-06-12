@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def conversion_virgules(df):
     for col in df.columns[2:]:
         try:
@@ -10,11 +11,13 @@ def conversion_virgules(df):
             print(f"[WARN] Problème avec la colonne {col} : {e}")
     return df
 
+
 def nettoyer_lignes(df, seuil=0.5):
     seuil_abs = int(seuil * df.shape[1])
     df = df.dropna(thresh=seuil_abs)
     df = df.reset_index(drop=True)
     return df
+
 
 def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
     valeurs_non_nulles = df.count()
@@ -49,6 +52,7 @@ def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     df = df.drop(columns=colonnes_a_supprimer)
     df.reset_index(drop=True, inplace=True)
     return df
+
 
 def dateRewrite(df):
     # Vérifie que la colonne existe

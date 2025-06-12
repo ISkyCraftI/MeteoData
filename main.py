@@ -1,15 +1,14 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import sys
+# import os
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 import pandas as pd
 import os
 
-from Traitement.nettoyage import *
-from Traitement.reductionDim import *
-from Traitement.courbes import *
+from nettoyage import *
+from reductionDim import *
+from courbes import *
 
 
 # Chargement du fichier (gzip)
@@ -38,16 +37,18 @@ if __name__ == "__main__":
     df = conversion_virgules(df)
     df.replace([' ', '', 'nan', 'None', 'NONE'], np.nan, inplace=True)
     
-    # 1. Supprimer colonnes avec < 5 valeurs
+    # 1. Supprime colonnes avec < 5 valeurs
     df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
     
-    # 2. Maintenant seulement, supprimer les lignes trop vides
+    # 2. Supprime les lignes trop vides
     seuil_lignes = 0.5
     print(df.isna().sum(axis=1).sort_values(ascending=False).head(10))
     print(f"Taille seuil NaN (lignes) : {int(seuil_lignes * df.shape[1])}")
     
     df = nettoyer_lignes(df, seuil=seuil_lignes)
     print(f"Dimensions après nettoyage lignes : {df.shape}")
+    
+    df = dateRewrite(df)
     
     #df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
     #print(f"Dimensions colonnes peu remplies : {df.shape}")
@@ -61,10 +62,11 @@ if __name__ == "__main__":
     
     # print(df.columns.tolist())
     
-    # df = dateRewrite(df)
+    
     
     df.to_csv("donnees_meteo_nettoyees.csv", index=False)
     print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
     
-    print(df[['AAAAMMJJHH']].head())
+    # Affichage des courbes
+    boiteAMoustache(df, verbose=True)
 
