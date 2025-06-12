@@ -54,11 +54,11 @@ if __name__ == "__main__":
     df = dateRewrite(df)   
     
     # 3. Supprime colonnes constantes
-    df = supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=True)
+    df = supprimer_colonnes_constantes(df, seuil_variation=1, verbose=True)
     
     df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
     
-    df = supprimer_colonnes_correlees(df, seuil=0.95)
+    df = supprimer_colonnes_correlees(df, seuil=0.94)
     
     correlation(df,seuil_corr=0.5)
 

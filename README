@@ -9,14 +9,14 @@ liens utiles :
 
 Un rapport est à rendre le mercredi 18 juin 23h59
 Plan
-1. Nettoyer la BDD
-    a. Effacer les lignes vides (ou <1% qui est rentré)
-    c. Effacer
-2. Calculer des moyennes, médianes, écarts-types
-3. Faire des courbes
-4. Réduire encore les dimensions
-    a. Effacer les lignes avec 98% de corrélation
-    b. Visualiser
+1. Nettoyer la BDD -> Fait
+    a. Effacer les lignes vides (ou <1% qui est rentré) -> Fait
+    c. Effacer -> Fait
+2. Calculer des moyennes, médianes, écarts-types -> En cours
+3. Faire des courbes    -> Fait
+4. Réduire encore les dimensions -> Fait
+    a. Effacer les lignes avec 95% de corrélation -> Fait
+    b. Visualiser   -> Fait
 5. Clusters 
     kmeans = sklearn.cluster.KMeans( params ).fit( X )
     a. Méthode du coude (voir combien de clusters nécessaires)
