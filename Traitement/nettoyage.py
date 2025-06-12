@@ -10,7 +10,7 @@ def conversion_virgules(df):
             print(f"[WARN] Problème avec la colonne {col} : {e}")
     return df
 
-def nettoyer_lignes(df, seuil=0.5):
+def nettoyer_lignes(df, seuil=0.1):
     seuil_abs = int(seuil * df.shape[1])
     df = df.dropna(thresh=seuil_abs)
     df = df.reset_index(drop=True)
