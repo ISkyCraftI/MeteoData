@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 import os
 
+from VisualtionsRedDim import *
 from nettoyage import *
 from reductionDim import *
 from courbes import *
-from VisualtionsRedDim import*
 
 
 # Chargement du fichier (gzip)
@@ -53,17 +53,17 @@ if __name__ == "__main__":
     
     df = dateRewrite(df)   
     
-    # df.to_csv("donnees_meteo_nettoyees.csv", index=False)
-    # print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
+    # 3. Supprime colonnes constantes
+    df = supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=True)
     
-    # Affichage des courbes
-
-    # boiteAMoustache(df, verbose=True)
+    df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
+    
+    df = supprimer_colonnes_correlees(df, seuil=0.98)
     
     correlation(df,seuil_corr=0.5)
 
+    # Affichage des courbes
     boiteAMoustache(df, verbose=True)
     
     NuagePointsTemperature(df)
-
 
