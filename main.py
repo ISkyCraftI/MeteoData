@@ -10,6 +10,7 @@ from VisualtionsRedDim import *
 from nettoyage import *
 from reductionDim import *
 from courbes import *
+from VisualisationCluster import *
 
 
 # Chargement du fichier (gzip)
@@ -54,11 +55,11 @@ if __name__ == "__main__":
     df = dateRewrite(df)   
     
     # 3. Supprime colonnes constantes
-    df = supprimer_colonnes_constantes(df, seuil_variation=1, verbose=True)
+    df = supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=True)
     
     df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
     
-    df = supprimer_colonnes_correlees(df, seuil=0.94)
+    df = supprimer_colonnes_correlees(df, seuil=0.95)
     
     correlation(df,seuil_corr=0.5)
 
@@ -66,4 +67,5 @@ if __name__ == "__main__":
     boiteAMoustache(df, verbose=True)
     
     NuagePointsTemperature(df)
-
+    
+    visualiser_clusters(df, 4)

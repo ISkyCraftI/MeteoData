@@ -1,23 +1,27 @@
 import numpy as np
-
+import pandas as pd
 
 def supprimer_colonnes_correlees(df, seuil=0.98):
-    colonnes = df.columns[2:]  # On ignore les 2 premières colonnes (ex : identifiants)
-    df_numeric = df[colonnes]
+    colonnes_a_exclure = ['NUM_POSTE', 'NOM_USUEL', 'AAAAMMJJHH']
 
-    # Calcul de la matrice de corrélation absolue
+    # Étape 1 : on exclut les colonnes non numériques
+    df_temp = df.drop(columns=colonnes_a_exclure, errors='ignore')
+    df_numeric = df_temp.loc[:, df_temp.apply(pd.api.types.is_numeric_dtype)]
+
+    # Vérification debug
+    print("[DEBUG] Colonnes numériques retenues :", df_numeric.columns.tolist())
+    print("[DEBUG] Types :", df_numeric.dtypes)
+
+    # Étape 2 : Matrice de corrélation
     corr_matrix = df_numeric.corr().abs()
 
-    # On ignore la diagonale
     upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
 
-    # Colonnes à supprimer
     colonnes_a_supprimer = [
         column for column in upper.columns if any(upper[column] > seuil)
     ]
 
-    print(f"Colonnes supprimées car corrélées à ≥ {seuil*100:.0f}% : {colonnes_a_supprimer}")
+    print(f"[INFO] Colonnes supprimées car corrélées ≥ {seuil*100:.0f}% :", colonnes_a_supprimer)
 
-    # Suppression dans le dataframe complet
-    df = df.drop(columns=colonnes_a_supprimer)
-    return df
+    df_clean = df.drop(columns=colonnes_a_supprimer, errors='ignore')
+    return df_clean
