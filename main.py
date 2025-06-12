@@ -9,6 +9,7 @@ import os
 from nettoyage import *
 from reductionDim import *
 from courbes import *
+from VisualtionsRedDim import*
 
 
 # Chargement du fichier (gzip)
@@ -68,5 +69,7 @@ if __name__ == "__main__":
     print("Fichier nettoyé exporté : donnees_meteo_nettoyees.csv")
     
     # Affichage des courbes
-    boiteAMoustache(df, verbose=True)
+    # boiteAMoustache(df, verbose=True)
+    
+    correlation(df,seuil_corr=0.5)
 

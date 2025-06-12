@@ -22,7 +22,7 @@ def boiteAMoustache(df, verbose=False):
     data = [df[col].dropna() for col in colonnes_triees]
 
     # Affichage
-    plt.figure(figsize=(16, 8))
+    # plt.figure(figsize=(4, 2))
     plt.boxplot(data, labels=colonnes_triees, patch_artist=True, vert=False)
     plt.title("Boîtes à moustaches des variables météo")
     plt.grid(True, axis='x')

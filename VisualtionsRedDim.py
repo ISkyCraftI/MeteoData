@@ -5,8 +5,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def correlation(df, seuil_corr):
-    colonnes_ue = df.columns[2:]  # Exclure Nom et Prénom
-    df_notes = df[colonnes_ue]
+    # Ne garder que les colonnes numériques
+    df_notes = df.select_dtypes(include=[np.number])
+
+    print("[DEBUG] Colonnes numériques sélectionnées :", df_notes.columns.tolist())
+    print("[DEBUG] Types de colonnes :")
+    print(df_notes.dtypes)
 
     # Matrice de corrélation
     matrice = df_notes.corr()
@@ -14,7 +18,7 @@ def correlation(df, seuil_corr):
     # Mise à zéro des corrélations faibles
     matrice_filtrée = matrice.where(matrice >= 0.40, 0)
 
-    # Compter les corrélations fortes (≥ 0.40), sans compter la diagonale
+    # Compter les corrélations fortes (≥ seuil), sans compter la diagonale
     seuil_nb = 3
     matrice_sans_diag = matrice.copy()
     np.fill_diagonal(matrice_sans_diag.values, 0)
@@ -34,11 +38,11 @@ def correlation(df, seuil_corr):
         vmin=-1,
         vmax=1,
         square=True,
-        # cbar=True,
         linewidths=0.5,
         linecolor='white'
     )
-    plt.title(f"UE ayant ≥ {seuil_nb} corrélations fortes (≥ {seuil_corr})")
+    plt.title(f"Precipitations  ≥ {seuil_nb} corrélations fortes (temperatures) (≥ {seuil_corr})")
     plt.xticks(rotation=45, ha='right')
+    plt.grid(True, axis='x')
     plt.tight_layout()
     plt.show()
