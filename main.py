@@ -58,7 +58,7 @@ if __name__ == "__main__":
     
     df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=True)
     
-    df = supprimer_colonnes_correlees(df, seuil=0.98)
+    df = supprimer_colonnes_correlees(df, seuil=0.95)
     
     correlation(df,seuil_corr=0.5)
 
