@@ -16,6 +16,16 @@ def nettoyer_lignes(df, seuil=0.5):
     df = df.reset_index(drop=True)
     return df
 
+def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
+    valeurs_non_nulles = df.count()
+    colonnes_a_supprimer = valeurs_non_nulles[valeurs_non_nulles < min_non_nan].index.tolist()
+
+    if verbose:
+        print(f"[INFO] Colonnes avec moins de {min_non_nan} valeurs non nulles : {colonnes_a_supprimer}")
+
+    return df.drop(columns=colonnes_a_supprimer).reset_index(drop=True)
+
+
 def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     colonnes_a_supprimer = []
     for col in df.columns[2:]:
