@@ -31,3 +31,24 @@ On compare les 3 départements
     - Corse : climat méditerranéen
 
 On remarque lorsque le vent vient du nord, il fait plus chaud à Dijon qu'à Brest et Ajaccio (par exemple).
+
+# Pour la preparation de donnees :
+# - il faut identifier les variables "inutiles" (peu d echantillons, variance faible...)
+# - il faut formater les dates en DateTime
+# - il faut visualiser les donnees prepares dans plusieurs graphiques
+# - il faut analyser les graphiques obtenus et proposer une interpretation
+
+# Pour la reduction de dimension :
+# - il faut calculer et afficher une matrice de correlation
+# - il faut selctionner les variables sans redondance
+# - il faut calculer et afficher le resultat d une ACP
+# - il faut extraire les dimensions pertinentes et justifier leur choix 
+
+# Pour le clustering :
+# - il faut appliquer un K-means ou un K-median sur leurs donnees
+# - il faut expliquer le resultat obtenu
+
+# Pour la regression lineaire :
+# - il faut identifier les variables a expliquer et les variables explicatives correspondantes
+# - il faut appliquer les algorithmes standards de refression lineaire
+# - il faut expliquer le resultat obtenu
