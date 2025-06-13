@@ -131,7 +131,7 @@ plt.tight_layout()
 plt.show()
 
 #  KMeans final avec k=5 (à adapter selon le coude)
-kmeans = KMeans(n_clusters=5, random_state=42)
+kmeans = KMeans(n_clusters=4, random_state=42)
 clusters = kmeans.fit_predict(X_scaled)
 df_pca["cluster"] = clusters
 
@@ -142,7 +142,7 @@ print("\n Centres des clusters dans l'espace original (standardisé) :\n", centr
 #  Visualisation des clusters avec seaborn
 plt.figure(figsize=(10, 6))
 sns.scatterplot(data=df_pca, x="PC1", y="PC2", hue="cluster", style="dep", palette="Set2", s=20)
-plt.title("Clustering météorologique par KMeans (3 clusters)")
+plt.title("Clustering météorologique par KMeans (n clusters)")
 plt.xlabel("Composante principale 1 (PC1)")
 plt.ylabel("Composante principale 2 (PC2)")
 plt.legend(title="Cluster")
