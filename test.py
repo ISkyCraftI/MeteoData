@@ -23,10 +23,10 @@ data = pd.concat(dfs.values(), ignore_index=True)
 
 # Conversion des types et nettoyage
 data["date"] = pd.to_datetime(data["AAAAMMJJHH"], format="%Y%m%d%H", errors="coerce")
-data = data.dropna(subset=["date", "T", "U", "FF", "DD", "PSTAT"])
+data = data.dropna(subset=["date","RR1", "T", "U", "FF", "DD", "PSTAT"])
 
 # Sélection et mise à l'échelle
-data = data[["date", "T", "U", "FF", "DD", "PSTAT", "dep"]].copy()
+data = data[["date", "RR1", "T", "U", "FF", "DD", "PSTAT", "dep"]].copy()
 data["T"] = data["T"] / 10
 data["FF"] = data["FF"] / 10
 data["P"] = data["PSTAT"] / 10  # pression en hPa
@@ -35,7 +35,7 @@ data["P"] = data["PSTAT"] / 10  # pression en hPa
 def statistiques(df):
     return df.describe().loc[["mean", "50%", "std"]].rename(index={"50%": "median"})
 
-stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
+stats = data.groupby("dep").apply(lambda x: statistiques(x[["RR1","T", "U", "P", "FF"]]))
 print("\n📊 Statistiques descriptives :\n", stats)
 
 #  Visualisation Température avec matplotlib
@@ -88,56 +88,63 @@ plt.ylabel("Fréquence")
 plt.show()
 
 # Matrice de corrélation (on garde seaborn pour heatmap)
-corr = data[["T", "U", "P", "FF"]].corr()
+corr = data[["RR1","T", "U", "P", "FF"]].corr()
 plt.figure(figsize=(6, 5))
 sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Matrice de corrélation")
 plt.show()
 
-# PCA
-features = ["T", "U", "P", "FF"]
-X = StandardScaler().fit_transform(data[features])
+#  Données utilisées pour le clustering
+features = ["RR1","T", "U", "P", "FF"]
+X = data[features].dropna()
+
+#  Standardisation
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+#  PCA pour visualisation 2D
 pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X)
-data_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
-data_pca["dep"] = data["dep"].values
+X_pca = pca.fit_transform(X_scaled)
 
-#  Affichage variance expliquée
+df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
+df_pca["dep"] = data.loc[X.index, "dep"].values  # même index que X
+
+#  Affichage de la variance expliquée
 explained_var = pca.explained_variance_ratio_
-print(f"\n Variance expliquée par les 2 premières composantes : {explained_var[0]:.2%} + {explained_var[1]:.2%} = {explained_var.sum():.2%}")
+print(f"\n Variance expliquée par les deux premières composantes : "
+      f"{explained_var[0]:.2%} + {explained_var[1]:.2%} = {explained_var.sum():.2%}")
 
-#  KMeans – méthode du coude
+#  Méthode du coude
 inertias = []
 for k in range(1, 10):
     kmeans = KMeans(n_clusters=k, random_state=42)
-    kmeans.fit(X)
+    kmeans.fit(X_scaled)
     inertias.append(kmeans.inertia_)
 
-plt.figure()
+plt.figure(figsize=(6, 4))
 plt.plot(range(1, 10), inertias, marker='o')
-plt.title("Méthode du coude - KMeans")
+plt.title("Méthode du coude - Nombre optimal de clusters")
 plt.xlabel("Nombre de clusters")
 plt.ylabel("Inertie")
 plt.grid()
+plt.tight_layout()
 plt.show()
 
-#  KMeans final (ex: k=3)
-kmeans = KMeans(n_clusters=3, random_state=42)
-data_pca["cluster"] = kmeans.fit_predict(X)
+#  KMeans final avec k=5 (à adapter selon le coude)
+kmeans = KMeans(n_clusters=5, random_state=42)
+clusters = kmeans.fit_predict(X_scaled)
+df_pca["cluster"] = clusters
 
-#  Centres des clusters
+#  Centres des clusters dans l'espace réduit
 centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
-print("\n Centres des clusters KMeans :\n", centres)
+print("\n Centres des clusters dans l'espace original (standardisé) :\n", centres)
 
-#  Visualisation des clusters (matplotlib)
+#  Visualisation des clusters avec seaborn
 plt.figure(figsize=(10, 6))
-colors = ['red', 'green', 'blue']
-for cluster in sorted(data_pca["cluster"].unique()):
-    subset = data_pca[data_pca["cluster"] == cluster]
-    plt.scatter(subset["PC1"], subset["PC2"], s=10, color=colors[cluster], label=f"Cluster {cluster}")
-plt.title("Clustering météorologique")
-plt.xlabel("PC1")
-plt.ylabel("PC2")
-plt.legend()
+sns.scatterplot(data=df_pca, x="PC1", y="PC2", hue="cluster", style="dep", palette="Set2", s=20)
+plt.title("Clustering météorologique par KMeans (3 clusters)")
+plt.xlabel("Composante principale 1 (PC1)")
+plt.ylabel("Composante principale 2 (PC2)")
+plt.legend(title="Cluster")
 plt.tight_layout()
 plt.show()
