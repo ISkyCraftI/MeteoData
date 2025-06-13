@@ -76,4 +76,3 @@ if __name__ == "__main__":
     print("\nCentres des clusters :\n", centres)
 
     # visualisation_clusters(data_pca, X, features)
-
