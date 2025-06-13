@@ -68,4 +68,5 @@ if __name__ == "__main__":
     
     NuagePointsTemperature(df)
     
-    visualiser_clusters(df, 4)
+    courbe_moyenne_par_mois(df, colonne="T", label="Température")
+    courbe_moyenne_par_mois(df, colonne="RR1", label="Précipitations")

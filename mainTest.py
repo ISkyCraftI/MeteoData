@@ -1,16 +1,11 @@
 import pandas as pd
 import numpy as np
 from nettoyage import conversion_virgules
-from moyMedEcTyp import statistiques
-from courbes import (
-    courbe_temperature_par_departement,
-    courbes_variables,
-    boxplot_temperature,
-    hist_temperature
-)
-from VisualtionsRedDim import heatmap_correlation, visualisation_clusters
-from reductionDim import appliquer_pca
-from methodeCoude import methode_du_coude
+from moyMedEcTyp import *
+from courbes import *
+from VisualtionsRedDim import *
+from reductionDim import *
+from methodeCoude import *
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
@@ -38,10 +33,15 @@ if __name__ == "__main__":
     
     # Conversion de date et nettoyage
     data["date"] = pd.to_datetime(data["AAAAMMJJHH"], format="%Y%m%d%H", errors="coerce")
-    data = data.dropna(subset=["date", "T", "U", "FF", "DD", "PSTAT"])
+    data = data.dropna(subset=["date", "T", "U", "RR1", "FF", "DD", "PSTAT"])
 
     # Préparation des colonnes utiles
     data = data[["date", "T", "U", "FF", "DD", "PSTAT", "dep"]].copy()
+    courbe_moyenne_par_mois(data, colonne="T", label="Température")
+    courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations")  # Pas trouvé
+    courbe_moyenne_par_mois(data, colonne="U", label="Humidité")
+    courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen")
+    
     data["T"] /= 10
     data["FF"] /= 10
     data["P"] = data["PSTAT"] / 10  # pression en hPa
@@ -75,4 +75,5 @@ if __name__ == "__main__":
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
     print("\nCentres des clusters :\n", centres)
 
-    visualisation_clusters(data_pca, X, features)
+    # visualisation_clusters(data_pca, X, features)
+

@@ -110,3 +110,39 @@ def hist_temperature(data):
     plt.xlabel("Température (°C)")
     plt.ylabel("Fréquence")
     plt.show()
+
+
+import matplotlib.pyplot as plt
+import calendar
+import pandas as pd
+
+def courbe_moyenne_par_mois(df: pd.DataFrame, colonne: str = "RR1", label=None):
+    if colonne not in df.columns or "date" not in df.columns:
+        print("Colonnes manquantes : il faut 'date' et", colonne)
+        return
+
+    # Copie et nettoyage
+    df = df.copy()
+    df[colonne] = pd.to_numeric(df[colonne], errors="coerce")
+    df = df.dropna(subset=[colonne, "date"])
+
+    # Extraire le mois
+    df["mois"] = df["date"].dt.month
+
+    # Moyenne mensuelle
+    moyennes = df.groupby("mois")[colonne].mean()
+
+    mois_labels = [calendar.month_name[m] for m in moyennes.index]
+
+    # Tracé
+    plt.figure(figsize=(10, 5))
+    plt.plot(moyennes.index, moyennes.values, marker='o', label=label or f"{colonne} par mois")
+    plt.xticks(moyennes.index, mois_labels, rotation=45)
+    plt.xlabel("Mois")
+    plt.ylabel(f"Moyenne de {colonne}")
+    plt.title(f"Moyenne mensuelle de {colonne}")
+    if label:
+        plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
