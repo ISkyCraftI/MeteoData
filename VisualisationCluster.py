@@ -9,7 +9,19 @@ import seaborn as sns
 
 def visualiser_clusters(df, n_clusters):
     # 1. Sélection des colonnes numériques
-    df_numeric = df.select_dtypes(include=[np.number]).dropna()
+    df_numeric = df.select_dtypes(include=[np.number])
+    print(f"[DEBUG] Colonnes numériques : {df_numeric.columns.tolist()}")
+    print(f"[DEBUG] Taille avant dropna : {df_numeric.shape}")
+
+    # 🛑 Vérifie si NaNs sont trop nombreux
+    df_numeric = df_numeric.fillna(df_numeric.mean(numeric_only=True))
+
+    print(f"[DEBUG] Taille après dropna : {df_numeric.shape}")
+
+    if df_numeric.empty:
+        print("[ERREUR] Aucune ligne complète sans NaN pour le clustering.")
+        print("[SOLUTION] Essayez avec `fillna()` à la place de `dropna()`.")
+        return
 
     # 2. Normalisation
     scaler = StandardScaler()
@@ -33,3 +45,4 @@ def visualiser_clusters(df, n_clusters):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+
