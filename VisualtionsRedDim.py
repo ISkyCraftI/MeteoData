@@ -46,3 +46,27 @@ def correlation(df, seuil_corr):
     plt.grid(True, axis='x')
     plt.tight_layout()
     plt.show()
+
+
+def heatmap_correlation(data):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    corr = data[["T", "U", "P", "FF"]].corr()
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
+    plt.title("Matrice de corrélation")
+    plt.show()
+
+def visualisation_clusters(data_pca):
+    import matplotlib.pyplot as plt
+    colors = ['red', 'green', 'blue']
+    plt.figure(figsize=(10, 6))
+    for cluster in sorted(data_pca["cluster"].unique()):
+        subset = data_pca[data_pca["cluster"] == cluster]
+        plt.scatter(subset["PC1"], subset["PC2"], s=10, color=colors[cluster], label=f"Cluster {cluster}")
+    plt.title("Clustering météorologique")
+    plt.xlabel("PC1")
+    plt.ylabel("PC2")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()

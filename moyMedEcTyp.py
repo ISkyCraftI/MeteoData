@@ -8,3 +8,6 @@ def extraction_infos_series(serie):
         "Médiane": serie.median(),
         "Nb valeurs": serie.count()
     }
+
+def statistiques(df):
+    return df.describe().loc[["mean", "50%", "std"]].rename(index={"50%": "median"})

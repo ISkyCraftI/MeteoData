@@ -1,48 +1,29 @@
-
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
+from sklearn.cluster import KMeans
 
-def visualiser_clusters(df, n_clusters):
-    # 1. Sélection des colonnes numériques
-    df_numeric = df.select_dtypes(include=[np.number])
-    print(f"[DEBUG] Colonnes numériques : {df_numeric.columns.tolist()}")
-    print(f"[DEBUG] Taille avant dropna : {df_numeric.shape}")
+def visualisation_clusters(df_pca, X, features, n_clusters):
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init='auto')
+    clusters = kmeans.fit_predict(X)
+    df_pca["cluster"] = clusters
 
-    # 🛑 Vérifie si NaNs sont trop nombreux
-    df_numeric = df_numeric.fillna(df_numeric.mean(numeric_only=True))
+    centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
+    print("\n📍 Centres des clusters dans l'espace original (standardisé) :\n", centres)
 
-    print(f"[DEBUG] Taille après dropna : {df_numeric.shape}")
-
-    if df_numeric.empty:
-        print("[ERREUR] Aucune ligne complète sans NaN pour le clustering.")
-        print("[SOLUTION] Essayez avec `fillna()` à la place de `dropna()`.")
-        return
-
-    # 2. Normalisation
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(df_numeric)
-
-    # 3. Clustering KMeans
-    kmeans = KMeans(n_clusters=n_clusters, random_state=0)
-    clusters = kmeans.fit_predict(X_scaled)
-
-    # 4. Réduction dimensionnelle (PCA)
-    pca = PCA(n_components=2)
-    X_pca = pca.fit_transform(X_scaled)
-
-    # 5. Visualisation
     plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=clusters, palette='tab10', s=60)
-    plt.title("Visualisation des clusters (PCA)")
-    plt.xlabel("Composante principale 1")
-    plt.ylabel("Composante principale 2")
-    plt.legend(title='Cluster')
-    plt.grid(True)
+    sns.scatterplot(
+        data=df_pca,
+        x="PC1",
+        y="PC2",
+        hue="cluster",
+        style="dep",
+        palette="Set2",
+        s=20
+    )
+    plt.title(f"Clustering météorologique par KMeans ({n_clusters} clusters)")
+    plt.xlabel("Composante principale 1 (PC1)")
+    plt.ylabel("Composante principale 2 (PC2)")
+    plt.legend(title="Cluster")
     plt.tight_layout()
     plt.show()
-

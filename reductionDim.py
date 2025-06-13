@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 def supprimer_colonnes_correlees(df, seuil=0.98):
     colonnes_a_exclure = ['NUM_POSTE', 'NOM_USUEL', 'AAAAMMJJHH']
@@ -25,3 +27,12 @@ def supprimer_colonnes_correlees(df, seuil=0.98):
 
     df_clean = df.drop(columns=colonnes_a_supprimer, errors='ignore')
     return df_clean
+
+
+def appliquer_pca(df, features):
+    X = StandardScaler().fit_transform(df[features])
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+    df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
+    return df_pca, pca.explained_variance_ratio_
+

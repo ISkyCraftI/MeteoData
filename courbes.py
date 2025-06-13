@@ -1,6 +1,8 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 def boiteAMoustache(df, verbose=False):
     # Colonnes à exclure manuellement (identifiants, horodatages, etc.)
@@ -30,7 +32,7 @@ def boiteAMoustache(df, verbose=False):
     plt.tight_layout()
     plt.show()
 
-import matplotlib.pyplot as plt
+
 
 def NuagePointsTemperature(df):
     # Vérifications préalables
@@ -56,4 +58,55 @@ def NuagePointsTemperature(df):
     plt.title("Nuage de points : Température en fonction du temps")
     plt.grid(True)
     plt.tight_layout()
+    plt.show()
+
+
+def courbe_temperature_par_departement(data):
+    plt.figure(figsize=(12, 6))
+    for dep in data["dep"].unique():
+        subset = data[data["dep"] == dep]
+        plt.plot(subset["date"], subset["T"], label=f"Dép {dep}", linewidth=0.5)
+    plt.legend()
+    plt.title("Température (°C) par département")
+    plt.xlabel("Date")
+    plt.ylabel("Température")
+    plt.tight_layout()
+    plt.show()
+
+
+def courbes_variables(data):
+    fig, axs = plt.subplots(3, 1, figsize=(14, 12), sharex=True)
+    for dep in data["dep"].unique():
+        subset = data[data["dep"] == dep]
+        axs[0].plot(subset["date"], subset["U"], label=f"Dép {dep}", linewidth=0.5)
+        axs[1].plot(subset["date"], subset["FF"], label=f"Dép {dep}", linewidth=0.5)
+        axs[2].plot(subset["date"], subset["P"], label=f"Dép {dep}", linewidth=0.5)
+
+    axs[0].set_title("Humidité (%)")
+    axs[1].set_title("Vent moyen (m/s)")
+    axs[2].set_title("Pression (hPa)")
+    axs[2].set_xlabel("Date")
+    for ax in axs:
+        ax.legend()
+        ax.set_ylabel("Valeur")
+    plt.tight_layout()
+    plt.show()
+
+
+def boxplot_temperature(data):
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=data, x="dep", y="T")
+    plt.title("Répartition des températures par département")
+    plt.show()
+
+
+def hist_temperature(data):
+    plt.figure(figsize=(12, 5))
+    for dep in data["dep"].unique():
+        subset = data[data["dep"] == dep]
+        plt.hist(subset["T"], bins=50, alpha=0.5, label=f"Dép {dep}")
+    plt.legend()
+    plt.title("Histogramme des températures")
+    plt.xlabel("Température (°C)")
+    plt.ylabel("Fréquence")
     plt.show()
