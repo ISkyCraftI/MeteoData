@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.cluster import KMeans
 
 def correlation(df, seuil_corr):
     # Ne garder que les colonnes numériques
@@ -48,25 +49,79 @@ def correlation(df, seuil_corr):
     plt.show()
 
 
-def heatmap_correlation(data):
-    import seaborn as sns
-    import matplotlib.pyplot as plt
+def heatmap_correlation(data, dep=None):
     corr = data[["T", "U", "P", "FF"]].corr()
     plt.figure(figsize=(6, 5))
     sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
-    plt.title("Matrice de corrélation")
+    
+    # Titre dynamique avec numéro de département
+    titre = f"Matrice de corrélation - Département {dep}" if dep else "Matrice de corrélation"
+    plt.title(titre)
+    plt.tight_layout()
     plt.show()
 
-def visualisation_clusters(data_pca):
-    import matplotlib.pyplot as plt
-    colors = ['red', 'green', 'blue']
-    plt.figure(figsize=(10, 6))
-    for cluster in sorted(data_pca["cluster"].unique()):
+def visualisation_clusters_pair(data_pca, dep, n_clusters=4):
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    
+    # Clustering sur PC1 et PC2
+    features_12 = ["PC1", "PC2"]
+    kmeans_12 = KMeans(n_clusters=n_clusters, random_state=42, n_init='auto')
+    data_pca["cluster_12"] = kmeans_12.fit_predict(data_pca[features_12])
+    centers_12 = kmeans_12.cluster_centers_
+
+    palette_12 = sns.color_palette("tab10", n_colors=n_clusters)
+    for cluster in range(n_clusters):
+        subset = data_pca[data_pca["cluster_12"] == cluster]
+        axes[0].scatter(subset["PC1"], subset["PC2"], s=10, color=palette_12[cluster], label=f"Clust {cluster}")
+    # Ajout des centres
+    axes[0].scatter(centers_12[:, 0], centers_12[:, 1], 
+                    c='black', marker='X', s=100, label='Centre')
+
+    axes[0].set_title(f"Clustering sur PC1 vs PC2 - Dép {dep}")
+    axes[0].set_xlabel("PC1")
+    axes[0].set_ylabel("PC2")
+    axes[0].legend()
+
+    # Clustering sur PC3 et PC4
+    features_34 = ["PC3", "PC4"]
+    kmeans_34 = KMeans(n_clusters=n_clusters, random_state=42, n_init='auto')
+    data_pca["cluster_34"] = kmeans_34.fit_predict(data_pca[features_34])
+    centers_34 = kmeans_34.cluster_centers_
+
+    palette_34 = sns.color_palette("tab20", n_colors=n_clusters)
+    for cluster in range(n_clusters):
+        subset = data_pca[data_pca["cluster_34"] == cluster]
+        axes[1].scatter(subset["PC3"], subset["PC4"], s=10, color=palette_34[cluster], label=f"Clust {cluster}")
+    # Ajout des centres
+    axes[1].scatter(centers_34[:, 0], centers_34[:, 1], 
+                    c='black', marker='X', s=100, label='Centre')
+
+    axes[1].set_title(f"Clustering sur PC3 vs PC4 - Dép {dep}")
+    axes[1].set_xlabel("PC3")
+    axes[1].set_ylabel("PC4")
+    axes[1].legend()
+
+    plt.tight_layout()
+    plt.show()
+
+def visualisation_clusters_3D(data_pca, dep):
+    unique_clusters = sorted(data_pca["cluster"].unique())
+    palette = sns.color_palette("hsv", len(unique_clusters))
+
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+
+    for i, cluster in enumerate(unique_clusters):
         subset = data_pca[data_pca["cluster"] == cluster]
-        plt.scatter(subset["PC1"], subset["PC2"], s=10, color=colors[cluster], label=f"Cluster {cluster}")
-    plt.title("Clustering météorologique")
-    plt.xlabel("PC1")
-    plt.ylabel("PC2")
-    plt.legend()
+        ax.scatter(
+            subset["PC1"], subset["PC2"], subset["PC3"],
+            color=palette[i], s=10, label=f"Cluster {cluster}"
+        )
+
+    ax.set_title(f"Clustering météorologique 3D - Dép {dep}")
+    ax.set_xlabel("PC1")
+    ax.set_ylabel("PC2")
+    ax.set_zlabel("PC3")
+    ax.legend()
     plt.tight_layout()
     plt.show()

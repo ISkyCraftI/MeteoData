@@ -29,10 +29,11 @@ def supprimer_colonnes_correlees(df, seuil=0.98):
     return df_clean
 
 
-def appliquer_pca(df, features):
+def appliquer_pca(df, features, n_components=4):
     X = StandardScaler().fit_transform(df[features])
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=n_components)
     X_pca = pca.fit_transform(X)
-    df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
+    columns = [f"PC{i+1}" for i in range(n_components)]
+    df_pca = pd.DataFrame(X_pca, columns=columns)
     return df_pca, pca.explained_variance_ratio_
 

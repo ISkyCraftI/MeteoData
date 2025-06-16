@@ -93,10 +93,29 @@ def courbes_variables(data):
     plt.show()
 
 
-def boxplot_temperature(data):
+def boxplot_temperature(data, departement_highlight="29"):
     plt.figure(figsize=(10, 6))
-    sns.boxplot(data=data, x="dep", y="T")
+
+    # Ordre inversé des départements (affiché de droite à gauche)
+    ordre_deps = sorted(data["dep"].unique(), reverse=True)
+    data["dep"] = pd.Categorical(data["dep"], categories=ordre_deps, ordered=True)
+
+    # Palette personnalisée
+    palette = {
+        dep: ("crimson" if dep == departement_highlight else "skyblue")
+        for dep in ordre_deps
+    }
+
+    # Création d'une nouvelle colonne avec T * 10 pour l'affichage
+    data["T_affichee"] = data["T"] * 10
+
+    sns.boxplot(data=data, x="dep", y="T_affichee", palette=palette)
+
     plt.title("Répartition des températures par département")
+    plt.xlabel("Département")
+    plt.ylabel("Température ×10 (°C)")
+    plt.grid(True, axis='y')
+    plt.tight_layout()
     plt.show()
 
 
