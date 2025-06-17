@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # boiteAMoustache(data)
     # correlation(data,seuil_corr=0.5)
     # courbe_temperature_par_departement(data)
-    # courbes_variables(data)
+    courbes_variables(data)
     # boxplot_temperature(data)
     # boxplot_variable(data)
     # hist_temperature(data)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     #  Régression linéaire sur PCA 
     for var in ["T", "U", "P", "FF"]:
-        data_pca[var] = data[var].values
+        data_pca[var] = data_clean[var].values
 
     print("\n[INFO] Régression linéaire : prédiction des composantes principales")
     for i in range(1, 5):

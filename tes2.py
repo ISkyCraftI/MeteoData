@@ -105,9 +105,10 @@ if __name__ == "__main__":
 
     # PCA
     features = ["T", "U", "P", "FF"]
-    X = StandardScaler().fit_transform(data[features])
-    data_pca, explained_var = appliquer_pca(data, features)
-    data_pca["dep"] = data["dep"].values
+    data_clean = data.dropna(subset=features).copy()
+    X = StandardScaler().fit_transform(data_clean[features])
+    data_pca, explained_var = appliquer_pca(data_clean, features)
+    data_pca["dep"] = data_clean["dep"].values
 
     print(f"\nVariance expliquée par les 2 premières composantes : {explained_var[0]:.2%} + {explained_var[1]:.2%} = {explained_var[:2].sum():.2%}")
     print(f"Variance expliquée par les composantes 3 et 4 : {explained_var[2]:.2%} + {explained_var[3]:.2%} = {explained_var[2:4].sum():.2%}")
@@ -133,10 +134,10 @@ if __name__ == "__main__":
         
     print(data.columns)   
     print(data_pca.columns)  
-    data_pca['FF'] = data['FF'].values
-    data_pca['U'] = data['U'].values
-    data_pca['T'] = data['T'].values
-    data_pca['P'] = data['P'].values
+    data_pca['FF'] = data_clean['FF'].values
+    data_pca['U'] = data_clean['U'].values
+    data_pca['T'] = data_clean['T'].values
+    data_pca['P'] = data_clean['P'].values
     
 combinations = [
     (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
