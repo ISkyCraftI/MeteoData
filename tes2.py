@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 from nettoyage import conversion_virgules
@@ -8,11 +9,13 @@ from courbes import *
 from VisualtionsRedDim import *
 from reductionDim import *
 from methodeCoude import *
+from VisualisationCluster import classifier
 
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 
 from regression import regression_lineaire
 
@@ -129,63 +132,33 @@ if __name__ == "__main__":
     data_pca['T'] = data['T'].values
     data_pca['P'] = data['P'].values
     
-    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC1') #0.7
-    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC2') #0.56
-    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC3') #0.43
-    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC4') #0.3
-    
-    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC1') #0.68
-    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC2') #0.59
-    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC3') #0.42 
-    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC4') #0.3
-    
-    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC1') #0.07
-    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC2') #0.92
-    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC3') #0.98
-    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC4') #0.02
-    
-    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC1') #0.94
-    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC2') #0.05
-    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC3') #0.03
-    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC4') #0.96
-    
-    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC1') #0.68
-    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC2') #0.59
-    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC3') #0.40
-    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC4') #0.31
-    
-    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC1') #0.69 
-    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC2') #0.6
-    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC3') #0.4
-    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC4') #0.3
-    
-resultats = []
+combinations = [
+    (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
+    (['FF', 'U'], 'PC1'), (['FF', 'U'], 'PC2'), (['FF', 'U'], 'PC3'), (['FF', 'U'], 'PC4'),
+    (['FF', 'P'], 'PC1'), (['FF', 'P'], 'PC2'), (['FF', 'P'], 'PC3'), (['FF', 'P'], 'PC4'),
+    (['T', 'U'], 'PC1'),  (['T', 'U'], 'PC2'),  (['T', 'U'], 'PC3'),  (['T', 'U'], 'PC4'),
+    (['T', 'P'], 'PC1'),  (['T', 'P'], 'PC2'),  (['T', 'P'], 'PC3'),  (['T', 'P'], 'PC4'),
+    (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
+]
 
-# Boucle sur les départements
-for dep in data_pca['dep'].unique():
-    sous_ensemble = data_pca[data_pca['dep'] == dep]
-    
-    # Vérifie qu'on a assez de données
-    if len(sous_ensemble) < 10:
-        continue
-    
-    X = sous_ensemble[['FF', 'U']]  # ou d'autres variables explicatives
-    y = sous_ensemble['T']          # ou une autre variable cible
-    
-    model = LinearRegression()
-    model.fit(X, y)
-    y_pred = model.predict(X)
-    r2 = r2_score(y, y_pred)
-    
-    resultats.append({
-        'Département': dep,
-        'R2': r2,
-        'Coefficients': model.coef_,
-        'Intercept': model.intercept_
-    })
+# for dep in data_pca['dep'].unique():
+#     sous_ensemble = data_pca[data_pca['dep'] == dep]
 
-# Convertir en DataFrame pour tri et affichage
-df_resultats = pd.DataFrame(resultats)
-df_resultats = df_resultats.sort_values(by='R2', ascending=False)
+#     if len(sous_ensemble) < 10:
+#         continue
 
-print(df_resultats)
+#     print(f"\nDÉPARTEMENT : {dep}\n")
+    
+#     for explicatives, cible in combinations:
+#         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
+#         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+    
+
+# Classification KNN et LDA via la fonction utilitaire
+resultats_par_dep = classifier(
+    data_pca,
+    features=["PC1", "PC2", "PC3", "PC4"],
+    target="cluster",
+    n_neighbors=5,
+    test_size=0.3
+)
