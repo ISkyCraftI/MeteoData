@@ -12,7 +12,6 @@ from reductionDim import *
 from methodeCoude import *
 from VisualisationCluster import classifier
 
-
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -89,6 +88,8 @@ if __name__ == "__main__":
     print("\nStatistiques descriptives :\n", stats)
 
     # Courbes temporelles
+    boiteAMoustache(data)
+    correlation(data,seuil_corr=0.5)
     courbe_temperature_par_departement(data)
     courbes_variables(data)
     boxplot_temperature(data)
@@ -96,74 +97,74 @@ if __name__ == "__main__":
     hist_temperature(data)
     hist_variable(data)
 
-#     # Corrélations par département
-#     for dep in data["dep"].unique():    
-#         print(f"\nCorrélation pour le département {dep} :")
-#         df_dep = data[data["dep"] == dep]
-#         heatmap_correlation(df_dep, dep = dep)
+    # Corrélations par département
+    for dep in data["dep"].unique():    
+        print(f"\nCorrélation pour le département {dep} :")
+        df_dep = data[data["dep"] == dep]
+        heatmap_correlation(df_dep, dep = dep)
 
-#     # PCA
-#     features = ["T", "U", "P", "FF"]
-#     X = StandardScaler().fit_transform(data[features])
-#     data_pca, explained_var = appliquer_pca(data, features)
-#     data_pca["dep"] = data["dep"].values
+    # PCA
+    features = ["T", "U", "P", "FF"]
+    X = StandardScaler().fit_transform(data[features])
+    data_pca, explained_var = appliquer_pca(data, features)
+    data_pca["dep"] = data["dep"].values
 
-#     print(f"\nVariance expliquée par les 2 premières composantes : {explained_var[0]:.2%} + {explained_var[1]:.2%} = {explained_var[:2].sum():.2%}")
-#     print(f"Variance expliquée par les composantes 3 et 4 : {explained_var[2]:.2%} + {explained_var[3]:.2%} = {explained_var[2:4].sum():.2%}")
+    print(f"\nVariance expliquée par les 2 premières composantes : {explained_var[0]:.2%} + {explained_var[1]:.2%} = {explained_var[:2].sum():.2%}")
+    print(f"Variance expliquée par les composantes 3 et 4 : {explained_var[2]:.2%} + {explained_var[3]:.2%} = {explained_var[2:4].sum():.2%}")
 
-#     # Clustering
-#     methode_du_coude(X)
+    # Clustering
+    methode_du_coude(X)
 
-#     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
-#     data_pca["cluster"] = kmeans.fit_predict(X)
-#     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
-#     print("\nCentres des clusters :\n", centres)
+    kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
+    data_pca["cluster"] = kmeans.fit_predict(X)
+    centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
+    print("\nCentres des clusters :\n", centres)
 
 
-#     features_pca = ["PC1", "PC2", "PC3", "PC4"]
-#     departements = data_pca["dep"].unique()
+    features_pca = ["PC1", "PC2", "PC3", "PC4"]
+    departements = data_pca["dep"].unique()
 
-#     for dep in departements:
-#         subset = data_pca[data_pca["dep"] == dep].copy()
+    for dep in departements:
+        subset = data_pca[data_pca["dep"] == dep].copy()
 
-#         visualisation_clusters_pair(subset, dep)
+        visualisation_clusters_pair(subset, dep)
         
-#         visualisation_clusters_3D(subset, dep)  
+        visualisation_clusters_3D(subset, dep)  
         
-#     print(data.columns)   
-#     print(data_pca.columns)  
-#     data_pca['FF'] = data['FF'].values
-#     data_pca['U'] = data['U'].values
-#     data_pca['T'] = data['T'].values
-#     data_pca['P'] = data['P'].values
+    print(data.columns)   
+    print(data_pca.columns)  
+    data_pca['FF'] = data['FF'].values
+    data_pca['U'] = data['U'].values
+    data_pca['T'] = data['T'].values
+    data_pca['P'] = data['P'].values
     
-# combinations = [
-#     (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
-#     (['FF', 'U'], 'PC1'), (['FF', 'U'], 'PC2'), (['FF', 'U'], 'PC3'), (['FF', 'U'], 'PC4'),
-#     (['FF', 'P'], 'PC1'), (['FF', 'P'], 'PC2'), (['FF', 'P'], 'PC3'), (['FF', 'P'], 'PC4'),
-#     (['T', 'U'], 'PC1'),  (['T', 'U'], 'PC2'),  (['T', 'U'], 'PC3'),  (['T', 'U'], 'PC4'),
-#     (['T', 'P'], 'PC1'),  (['T', 'P'], 'PC2'),  (['T', 'P'], 'PC3'),  (['T', 'P'], 'PC4'),
-#     (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
-# ]
+combinations = [
+    (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
+    (['FF', 'U'], 'PC1'), (['FF', 'U'], 'PC2'), (['FF', 'U'], 'PC3'), (['FF', 'U'], 'PC4'),
+    (['FF', 'P'], 'PC1'), (['FF', 'P'], 'PC2'), (['FF', 'P'], 'PC3'), (['FF', 'P'], 'PC4'),
+    (['T', 'U'], 'PC1'),  (['T', 'U'], 'PC2'),  (['T', 'U'], 'PC3'),  (['T', 'U'], 'PC4'),
+    (['T', 'P'], 'PC1'),  (['T', 'P'], 'PC2'),  (['T', 'P'], 'PC3'),  (['T', 'P'], 'PC4'),
+    (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
+]
 
-# for dep in data_pca['dep'].unique():
-#     sous_ensemble = data_pca[data_pca['dep'] == dep]
+for dep in data_pca['dep'].unique():
+    sous_ensemble = data_pca[data_pca['dep'] == dep]
 
-#     if len(sous_ensemble) < 10:
-#         continue
+    if len(sous_ensemble) < 10:
+        continue
 
-#     print(f"\nDÉPARTEMENT : {dep}\n")
+    print(f"\nDÉPARTEMENT : {dep}\n")
     
-#     for explicatives, cible in combinations:
-#         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
-#         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+    for explicatives, cible in combinations:
+        print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
+        regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
     
 
 # Classification KNN et LDA via la fonction utilitaire
-# resultats_par_dep = classifier(
-#     data_pca,
-#     features=["PC1", "PC2", "PC3", "PC4"],
-#     target="cluster",
-#     n_neighbors=5,
-#     test_size=0.3
-# )
+resultats_par_dep = classifier(
+    data_pca,
+    features=["PC1", "PC2", "PC3", "PC4"],
+    target="cluster",
+    n_neighbors=5,
+    test_size=0.3
+)
