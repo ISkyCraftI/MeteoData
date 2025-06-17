@@ -12,7 +12,7 @@ from methodeCoude import *
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-from regression import regression_lineaire, regression_sklearn_simple
+from regression import regression_lineaire
 
 # Chargement multi-départements
 files = {

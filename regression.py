@@ -1,7 +1,7 @@
 
 
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.linear_model import *
+from sklearn.metrics import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -61,3 +61,4 @@ def regression_lineaire(df, explicatives, cible):
         plt.grid(True)
         plt.tight_layout()
         plt.show()
+        
