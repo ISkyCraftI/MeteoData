@@ -85,7 +85,7 @@ def dateRewrite(df):
     df['AAAAMMJJHH'] = df['AAAAMMJJHH'].dt.strftime('%Y-%m-%dT%H:00:00')
     return df
 
-# ❌
+# ✅
 def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
     """
     Nettoie un DataFrame météo pour une analyse horaire (clustering, ACP, ML).
