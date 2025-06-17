@@ -3,7 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from nettoyage import conversion_virgules
+from nettoyage import conversion_virgules, nettoyer_donnees
 from moyMedEcTyp import *
 from courbes import boxplot_variable
 from courbes import *
@@ -58,18 +58,22 @@ def courbe_moyenne_par_mois(df, colonne, label="", group_by_dep=False):
     plt.tight_layout()
     plt.show()
 
-# Programme principal
+def filtrer_colonnes_utiles(df):
+    colonnes = ["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "P", "dep"]
+    colonnes_presentes = [col for col in colonnes if col in df.columns]
+    return df[colonnes_presentes].copy()
+
+#  Programme principal 
 if __name__ == "__main__":
     # Chargement brut
     data = charger_donnees_departements(files)
-    print(f"Données brutes : {data.shape}")
-    
-    # Conversion de date et nettoyage
-    data["date"] = pd.to_datetime(data["AAAAMMJJHH"], format="%Y%m%d%H", errors="coerce")
-    data = data.dropna(subset=["date", "T", "U", "RR1", "FF", "DD", "PSTAT"])
+    print(f"[INFO] Dimensions brutes : {data.shape}")
 
-    # Préparation des colonnes utiles
-    data = data[["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "dep"]].copy()
+    # Nettoyage : retourne uniquement les données horaires
+    data = nettoyer_donnees(data, verbose=True)
+
+    # Conversion unités
+    data["P"] = data["PSTAT"]
     
     # Courbes moyennes mensuelles pour chaque variable
     # courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
@@ -77,10 +81,8 @@ if __name__ == "__main__":
     # courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
     # courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
     
-    # Conversion unités
-    data["T"] /= 10
-    data["FF"] /= 10
-    data["P"] = data["PSTAT"] / 10  # pression en hPa
+    # Conversion des unités
+    data["P"] = data["PSTAT"] # pression en hPa
 
     # Statistiques par département
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
