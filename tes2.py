@@ -167,5 +167,5 @@ resultats_par_dep = classifier(
     features=["PC1", "PC2", "PC3", "PC4"],
     target="cluster",
     n_neighbors=5,
-    test_size=0.3
+    test_size=0.2
 )

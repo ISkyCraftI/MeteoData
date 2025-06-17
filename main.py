@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # boiteAMoustache(data)
     # correlation(data,seuil_corr=0.5)
     # courbe_temperature_par_departement(data)
-    courbes_variables(data)
+    # courbes_variables(data)
     # boxplot_temperature(data)
     # boxplot_variable(data)
     # hist_temperature(data)
@@ -65,19 +65,6 @@ if __name__ == "__main__":
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
     print("\n[INFO] Centres des clusters :\n", centres)
 
-    # for dep in data_pca["dep"].unique():
-    #     subset = data_pca[data_pca["dep"] == dep]
-    #     visualisation_clusters_pair(subset, dep)
-    #     visualisation_clusters_3D(subset, dep)
-
-    #  Régression linéaire sur PCA 
-    # for var in ["T", "U", "P", "FF"]:
-    #     data_pca[var] = data_clean[var].values
-
-    # print("\n[INFO] Régression linéaire : prédiction des composantes principales")
-    # for i in range(1, 5):
-    #     regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
-
 print(data.columns)   
 print(data_pca.columns)  
 data_pca['FF'] = data_clean['FF'].values
@@ -109,4 +96,11 @@ for dep in data_pca['dep'].unique():
     # Optionnel : réduire les colonnes
     data = filtrer_colonnes_utiles(data)
 
-
+# Classification KNN et LDA via la fonction utilitaire
+resultats_par_dep = classifier(
+    data_pca,
+    features=["PC1", "PC2", "PC3", "PC4"],
+    target="cluster",
+    n_neighbors=5,
+    test_size=0.2
+)
