@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-
+# ✅
 def conversion_virgules(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
     df = df.copy()
     cols_concernees = []
@@ -30,14 +30,14 @@ def conversion_virgules(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
 
     return df
 
-
+# ✅
 def nettoyer_lignes(df, seuil=0.1):
     seuil_abs = max(1, int(seuil * df.shape[1]))
     df = df.dropna(thresh=seuil_abs)
     df = df.reset_index(drop=True)
     return df
 
-
+# ✅
 def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
     valeurs_non_nulles = df.count()
     colonnes_a_supprimer = valeurs_non_nulles[valeurs_non_nulles < min_non_nan].index.tolist()
@@ -47,7 +47,7 @@ def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
 
     return df.drop(columns=colonnes_a_supprimer).reset_index(drop=True)
 
-
+# ✅
 def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     colonnes_a_supprimer = []
     for col in df.columns[2:]:
@@ -72,7 +72,7 @@ def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     df.reset_index(drop=True, inplace=True)
     return df
 
-
+# ✅
 def dateRewrite(df):
     # Vérifie que la colonne existe
     if 'AAAAMMJJHH' not in df.columns:
@@ -85,11 +85,15 @@ def dateRewrite(df):
     df['AAAAMMJJHH'] = df['AAAAMMJJHH'].dt.strftime('%Y-%m-%dT%H:00:00')
     return df
 
-
+# ❌
 def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
     """
-    Nettoie un DataFrame météo. 
-    La colonne 'AAAAMMJJHH' doit être au format chaîne ou entier respectant le format '%Y%m%d%H' (ex: 2024010113).
+    Nettoie un DataFrame météo pour une analyse horaire (clustering, ACP, ML).
+
+    Étapes :
+    - Nettoyage classique (lignes vides, colonnes peu remplies, constantes, etc.)
+    - Conversion des formats (virgules, date ISO)
+    - Moyenne unique par heure pour chaque 'dep'
     """
     df = df.copy()
 
@@ -101,23 +105,30 @@ def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
 
     if verbose: print("[INFO] Suppression des colonnes constantes...")
     df = supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=verbose)
-    
+
     if verbose: print("[INFO] Conversion des virgules en points...")
     df = conversion_virgules(df)
 
     if verbose: print("[INFO] Réécriture des dates au format ISO...")
     df = dateRewrite(df)
 
-    # Ajout colonne date convertie + tri
+    # Conversion en datetime
     df['date'] = pd.to_datetime(df['AAAAMMJJHH'], format='%Y-%m-%dT%H:00:00', errors='coerce')
-    if df['date'].isna().any():
-        raise ValueError("Erreur de parsing : certaines valeurs de 'AAAAMMJJHH' ne respectent pas le format attendu '%Y%m%d%H' (ex: 2024010113).")
-    df = df.dropna(subset=['date', 'T'])
 
-    # Nettoyage spécifique par département
-    if 'dep' in df.columns:
-        df = df.drop_duplicates(subset=['dep', 'date', 'T'])
-        df = df.sort_values(by=['dep', 'date'])
+    # On garde uniquement les lignes avec une date valide
+    df = df.dropna(subset=['date'])
 
-    df.reset_index(drop=True, inplace=True)
+    # Sélectionne uniquement les colonnes numériques à moyenner
+    colonnes_a_moyenner = df.select_dtypes(include=[np.number]).columns.tolist()
+    colonnes_a_moyenner = [col for col in colonnes_a_moyenner if col not in ["NUM_POSTE"]]  # exclure ID si besoin
+
+    # Agrégation par dep + date (1 valeur par heure max)
+    if verbose:
+        print(f"[INFO] Colonnes agrégées par heure : {colonnes_a_moyenner}")
+
+    df = df.groupby(['dep', 'date'])[colonnes_a_moyenner].mean().reset_index()
+
+    df = df.sort_values(by=['dep', 'date']).reset_index(drop=True)
+
     return df
+

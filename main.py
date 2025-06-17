@@ -39,27 +39,20 @@ if __name__ == "__main__":
     data = charger_donnees_departements(files)
     print(f"[INFO] Dimensions brutes : {data.shape}")
 
-    # Nettoyage centralisé (inclut traitement dates, virgules, doublons…)
+    # Nettoyage : retourne uniquement les données horaires
     data = nettoyer_donnees(data, verbose=True)
 
     # Conversion unités
-    # data["T"] /= 10
-    # data["FF"] /= 10
-    # data["P"] = data["PSTAT"] / 10
+    data["P"] = data["PSTAT"]
 
-    # Visualisations météo
+    # === Visualisations météo (par heure) ===
     courbe_temperature_par_departement(data)
     boiteAMoustache(data)
     courbes_variables(data)
     boxplot_temperature(data)
     hist_temperature(data)
 
-    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
-
-    # Statistiques descriptives
+    # Statistiques descriptives (sur les données horaires)
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 
@@ -68,7 +61,7 @@ if __name__ == "__main__":
         print(f"\n[INFO] Corrélation - Département {dep}")
         heatmap_correlation(data[data["dep"] == dep], dep=dep)
 
-    # ACP
+    # === ACP ===
     features = ["T", "U", "P", "FF"]
     X = StandardScaler().fit_transform(data[features])
     data_pca, explained_var = appliquer_pca(data, features)
@@ -77,7 +70,7 @@ if __name__ == "__main__":
     print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
 
-    # Clustering
+    # === Clustering ===
     methode_du_coude(X)
 
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
@@ -90,7 +83,7 @@ if __name__ == "__main__":
         visualisation_clusters_pair(subset, dep)
         visualisation_clusters_3D(subset, dep)
 
-    # Régression linéaire sur PCA
+    # === Régression linéaire sur PCA ===
     for var in ["T", "U", "P", "FF"]:
         data_pca[var] = data[var].values
 
@@ -98,5 +91,5 @@ if __name__ == "__main__":
     for i in range(1, 5):
         regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
 
-    # Réduction du dataset pour ML (si besoin)
+    # Optionnel : réduire les colonnes
     data = filtrer_colonnes_utiles(data)
