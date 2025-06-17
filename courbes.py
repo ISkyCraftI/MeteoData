@@ -3,12 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import calendar
+from importeur import COULEURS_DEPS
 
-# === Palette personnalisée des départements ===
-COULEURS_DEPS = {
-    "21": "#8f2035",   # Bordeaux (effet vin/cassis)
-    "29": "#bbd500"    # Vert vif
-}
 
 def boiteAMoustache(df, verbose=False):
     colonnes_exclues = ['NUM_POSTE', 'AAAAMMJJHH']

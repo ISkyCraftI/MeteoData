@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+from importeur import *
 from nettoyage import nettoyer_donnees
 from moyMedEcTyp import statistiques
 from courbes import *
@@ -13,25 +14,6 @@ from regression import regression_lineaire
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# === Chargement multi-départements ===
-files = {
-    "29": "D29/H_29_2020-2023.csv.gz",
-    "21": "D21/H_21_previous-2020-2023.csv.gz",
-}
-
-def charger_donnees_departements(files_dict):
-    dfs = []
-    for dep, file in files_dict.items():
-        df = pd.read_csv(file, compression='gzip', sep=';', low_memory=False)
-        df["dep"] = dep
-        df.columns = df.columns.str.strip()
-        dfs.append(df)
-    return pd.concat(dfs, ignore_index=True)
-
-def filtrer_colonnes_utiles(df):
-    colonnes = ["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "P", "dep"]
-    colonnes_presentes = [col for col in colonnes if col in df.columns]
-    return df[colonnes_presentes].copy()
 
 #  Programme principal 
 if __name__ == "__main__":
@@ -112,19 +94,19 @@ combinations = [
     (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
 ]
 
-# for dep in data_pca['dep'].unique():
-#     sous_ensemble = data_pca[data_pca['dep'] == dep]
+for dep in data_pca['dep'].unique():
+    sous_ensemble = data_pca[data_pca['dep'] == dep]
 
-#     if len(sous_ensemble) < 10:
-#         continue
+    if len(sous_ensemble) < 10:
+        continue
 
-#     print(f"\nDÉPARTEMENT : {dep}\n")
+    print(f"\nDÉPARTEMENT : {dep}\n")
     
-#     for explicatives, cible in combinations:
-#         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
-#         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+    for explicatives, cible in combinations:
+        print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
+        regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
 
-#     # Optionnel : réduire les colonnes
-#     data = filtrer_colonnes_utiles(data)
+    # Optionnel : réduire les colonnes
+    data = filtrer_colonnes_utiles(data)
 
 

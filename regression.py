@@ -1,3 +1,5 @@
+from importeur import COULEURS_DEPS
+
 def regression_lineaire(df, explicatives, cible):
     from sklearn.linear_model import LinearRegression
     from sklearn.metrics import r2_score
@@ -10,9 +12,11 @@ def regression_lineaire(df, explicatives, cible):
     y_pred = model.predict(X)
     score = r2_score(y, y_pred)
 
-    # Département pour titre
+    # Récupère le département (pour couleur et titre)
     dep = df["dep"].iloc[0] if "dep" in df.columns else "Inconnu"
+    couleur = COULEURS_DEPS.get(dep, "gray")  # Couleur par défaut : gris
     titre = f"{cible} ~ {' + '.join(explicatives)}"
+
     print(f"[{dep}] {titre} | R² multiple = {score:.3f}")
     
     # Visualisation 2D par variable explicative
@@ -23,8 +27,8 @@ def regression_lineaire(df, explicatives, cible):
         r2_simple = r2_score(y, y_pred_1d)
 
         plt.figure(figsize=(8, 5))
-        plt.scatter(x_var, y, alpha=0.6, edgecolor='k', label="Données")
-        plt.plot(x_var, y_pred_1d, color='red', linewidth=2, label="Régression simple")
+        plt.scatter(x_var, y, alpha=0.5, edgecolor='k', color=couleur, label=f"Dép {dep}")
+        plt.plot(x_var, y_pred_1d, color='black', linewidth=2, label="Régression simple")
         plt.xlabel(var)
         plt.ylabel(cible)
         plt.title(f"{cible} ~ {var} — Dép {dep}\nR² simple : {r2_simple:.2f} | R² multiple : {score:.2f}")
