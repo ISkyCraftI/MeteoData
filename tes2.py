@@ -11,6 +11,8 @@ from methodeCoude import *
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 from regression import regression_lineaire
 
@@ -156,3 +158,34 @@ if __name__ == "__main__":
     # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC2') #0.6
     # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC3') #0.4
     # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC4') #0.3
+    
+resultats = []
+
+# Boucle sur les départements
+for dep in data_pca['dep'].unique():
+    sous_ensemble = data_pca[data_pca['dep'] == dep]
+    
+    # Vérifie qu'on a assez de données
+    if len(sous_ensemble) < 10:
+        continue
+    
+    X = sous_ensemble[['FF', 'U']]  # ou d'autres variables explicatives
+    y = sous_ensemble['T']          # ou une autre variable cible
+    
+    model = LinearRegression()
+    model.fit(X, y)
+    y_pred = model.predict(X)
+    r2 = r2_score(y, y_pred)
+    
+    resultats.append({
+        'Département': dep,
+        'R2': r2,
+        'Coefficients': model.coef_,
+        'Intercept': model.intercept_
+    })
+
+# Convertir en DataFrame pour tri et affichage
+df_resultats = pd.DataFrame(resultats)
+df_resultats = df_resultats.sort_values(by='R2', ascending=False)
+
+print(df_resultats)
