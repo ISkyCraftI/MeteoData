@@ -3,16 +3,33 @@ import pandas as pd
 
 
 
-def conversion_virgules(df):
+def conversion_virgules(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
+    df = df.copy()
+    cols_concernees = []
+
     for col in df.columns[2:]:
         try:
-            if not pd.api.types.is_string_dtype(df[col]):
-                df[col] = df[col].astype(str)
-            df[col] = df[col].str.replace(',', '.', regex=False)
+            if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):
+                # Vérifie rapidement s'il y a des virgules dans les 100 premiqères lignes
+                if df[col].astype(str).head(100).str.contains(',', regex=False).any():
+                    cols_concernees.append(col)
+        except Exception as e:
+            if verbose:
+                print(f"[WARN] Impossible d'analyser {col} : {e}")
+    
+    if verbose:
+        print(f"[INFO] Colonnes avec virgules détectées ({len(cols_concernees)}) : {cols_concernees}")
+
+    for col in cols_concernees:
+        try:
+            df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
             df[col] = pd.to_numeric(df[col], errors='coerce')
         except Exception as e:
-            print(f"[WARN] Problème avec la colonne {col} : {e}")
+            if verbose:
+                print(f"[WARN] Conversion échouée pour {col} : {e}")
+
     return df
+
 
 def nettoyer_lignes(df, seuil=0.1):
     seuil_abs = max(1, int(seuil * df.shape[1]))
