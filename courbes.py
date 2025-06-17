@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import calendar
+
 
 
 def boiteAMoustache(df, verbose=False):
@@ -130,11 +132,6 @@ def hist_temperature(data):
     plt.xlabel("Température (°C)")
     plt.ylabel("Fréquence")
     plt.show()
-
-
-import matplotlib.pyplot as plt
-import calendar
-import pandas as pd
 
 def courbe_moyenne_par_mois(df: pd.DataFrame, colonne: str = "RR1", label=None):
     if colonne not in df.columns or "date" not in df.columns:
