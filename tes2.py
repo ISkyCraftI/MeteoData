@@ -68,10 +68,10 @@ if __name__ == "__main__":
     data = data[["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "dep"]].copy()
     
     # Courbes moyennes mensuelles pour chaque variable
-    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
-    courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
+    # courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
+    # courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
+    # courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
+    # courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
     
     # Conversion unités
     data["T"] /= 10

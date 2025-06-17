@@ -2,6 +2,37 @@ import numpy as np
 import pandas as pd
 
 
+def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
+    df = df.copy()
+
+    if verbose: print("[INFO] Conversion des virgules en points...")
+    df = conversion_virgules(df)
+
+    if verbose: print("[INFO] Nettoyage des lignes trop incomplètes...")
+    df = nettoyer_lignes(df, seuil=0.1)
+
+    if verbose: print("[INFO] Suppression des colonnes peu remplies...")
+    df = supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=verbose)
+
+    if verbose: print("[INFO] Suppression des colonnes constantes...")
+    df = supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=verbose)
+
+    if verbose: print("[INFO] Réécriture des dates au format ISO...")
+    df = dateRewrite(df)
+
+    # Ajout colonne date convertie + tri
+    df['date'] = pd.to_datetime(df['AAAAMMJJHH'], errors='coerce')
+    df = df.dropna(subset=['date', 'T'])
+
+    # Nettoyage spécifique par département
+    if 'dep' in df.columns:
+        df = df.drop_duplicates(subset=['dep', 'date', 'T'])
+        df = df.sort_values(by=['dep', 'date'])
+
+    df.reset_index(drop=True, inplace=True)
+    return df
+
+
 def conversion_virgules(df):
     for col in df.columns[2:]:
         try:

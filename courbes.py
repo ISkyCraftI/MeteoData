@@ -62,10 +62,19 @@ def NuagePointsTemperature(df):
 
 
 def courbe_temperature_par_departement(data):
-    plt.figure(figsize=(12, 6))
-    for dep in data["dep"].unique():
-        subset = data[data["dep"] == dep]
-        plt.plot(subset["date"], subset["T"], label=f"Dép {dep}", linewidth=0.5)
+    plt.figure(figsize=(15, 6))
+
+    # Ajout de la colonne date_jour si elle n'existe pas déjà
+    if "date_jour" not in data.columns:
+        data["date_jour"] = data["date"].dt.date
+
+    # Moyenne journalière par département
+    data_jour = data.groupby(["dep", "date_jour"])["T"].mean().reset_index()
+
+    for dep in data_jour["dep"].unique():
+        subset = data_jour[data_jour["dep"] == dep]
+        plt.plot(subset["date_jour"], subset["T"], label=f"Dép {dep}", linewidth=0.8)
+
     plt.legend()
     plt.title("Température (°C) par département")
     plt.xlabel("Date")
