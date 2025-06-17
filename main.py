@@ -46,8 +46,9 @@ if __name__ == "__main__":
     data["P"] = data["PSTAT"]
 
     #  Visualisations météo (par heure) 
-    courbe_temperature_par_departement(data)
     boiteAMoustache(data)
+    correlation(data,seuil_corr=0.5)
+    courbe_temperature_par_departement(data)
     courbes_variables(data)
     boxplot_temperature(data)
     boxplot_variable(data)
