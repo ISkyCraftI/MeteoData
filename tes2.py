@@ -155,16 +155,10 @@ combinations = [
     
 
 # Classification KNN et LDA via la fonction utilitaire
-resultats = classifier(
+resultats_par_dep = classifier(
     data_pca,
     features=["PC1", "PC2", "PC3", "PC4"],
     target="cluster",
     n_neighbors=5,
     test_size=0.3
 )
-
-
-print("\nRésultats via fonction classifier :")
-print("Score KNN :", resultats["score_knn"])
-print("Score LDA :", resultats["score_lda"])
-print("Matrice de corrélation :\n", resultats["correlation_matrix"])

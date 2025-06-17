@@ -43,8 +43,10 @@ def classifier(data_pca, features, target, n_neighbors=5, test_size=0.3):
     import matplotlib.pyplot as plt
     import pandas as pd
 
+    resultats = {}
+
     for dep in data_pca["dep"].unique():
-        print(f"\n Département : {dep} ")
+        print(f"\nDépartement : {dep}")
 
         subset = data_pca[data_pca["dep"] == dep]
 
@@ -91,4 +93,16 @@ def classifier(data_pca, features, target, n_neighbors=5, test_size=0.3):
         plt.ylabel("Réel")
         plt.tight_layout()
         plt.show()
+
+        # Matrice de corrélation pour ce département
+        corr_matrix = pd.concat([subset[features], subset[[target]]], axis=1).corr()
+
+        # Stocker les résultats pour ce département
+        resultats[dep] = {
+            "score_knn": knn_score,
+            "score_lda": lda_score,
+            "correlation_matrix": corr_matrix
+        }
+
+    return resultats
 
