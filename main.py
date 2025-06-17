@@ -45,30 +45,32 @@ if __name__ == "__main__":
     # Conversion unités
     data["P"] = data["PSTAT"]
 
-    #  Visualisations météo (par heure) 
-    boiteAMoustache(data)
-    correlation(data,seuil_corr=0.5)
-    courbe_temperature_par_departement(data)
-    courbes_variables(data)
-    boxplot_temperature(data)
-    boxplot_variable(data)
-    hist_temperature(data)
-    hist_variable(data)
-
+    #  Visualisations météo (par heure) A DECOMMENTER
+    # boiteAMoustache(data)
+    # correlation(data,seuil_corr=0.5)
+    # courbe_temperature_par_departement(data)
+    # courbes_variables(data)
+    # boxplot_temperature(data)
+    # boxplot_variable(data)
+    # hist_temperature(data)
+    # hist_variable(data)
+    
     # Statistiques descriptives (sur les données horaires)
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 
-    # Corrélation par département
-    for dep in data["dep"].unique():
-        print(f"\n[INFO] Corrélation - Département {dep}")
-        heatmap_correlation(data[data["dep"] == dep], dep=dep)
-
+    # # Corrélation par département A DECOMMENTER
+    # for dep in data["dep"].unique():
+    #     print(f"\n[INFO] Corrélation - Département {dep}")
+    #     heatmap_correlation(data[data["dep"] == dep], dep=dep)
+    print("COLONNES\n : ")
+    data.columns 
     #  ACP 
     features = ["T", "U", "P", "FF"]
-    X = StandardScaler().fit_transform(data[features])
-    data_pca, explained_var = appliquer_pca(data, features)
-    data_pca["dep"] = data["dep"].values
+    data_clean = data.dropna(subset=features).copy()
+    X = StandardScaler().fit_transform(data_clean[features])
+    data_pca, explained_var = appliquer_pca(data_clean, features)
+    data_pca["dep"] = data_clean["dep"].values
 
     print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
