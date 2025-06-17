@@ -1,19 +1,19 @@
-import numpy as np
 import pandas as pd
-import os
+import numpy as np
 
-from nettoyage import *
+from nettoyage import nettoyer_donnees
+from moyMedEcTyp import statistiques
 from courbes import *
 from VisualtionsRedDim import *
 from reductionDim import *
 from methodeCoude import *
-from regression import regression_lineaire
 from VisualisationCluster import *
+from regression import regression_lineaire
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# Dictionnaire des fichiers multi-départements
+# === Chargement multi-départements ===
 files = {
     "29": "D29/H_29_2020-2023.csv.gz",
     "21": "D21/H_21_previous-2020-2023.csv.gz",
@@ -21,46 +21,54 @@ files = {
 
 def charger_donnees_departements(files_dict):
     dfs = []
-    for dep, path in files_dict.items():
-        print(f"[INFO] Chargement : {path}")
-        df = pd.read_csv(path, sep=';', compression='infer', low_memory=False)
+    for dep, file in files_dict.items():
+        df = pd.read_csv(file, compression='gzip', sep=';', low_memory=False)
         df["dep"] = dep
         df.columns = df.columns.str.strip()
         dfs.append(df)
     return pd.concat(dfs, ignore_index=True)
 
-# ======== Programme principal ========
+def filtrer_colonnes_utiles(df):
+    colonnes = ["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "P", "dep"]
+    colonnes_presentes = [col for col in colonnes if col in df.columns]
+    return df[colonnes_presentes].copy()
+
+# === Programme principal ===
 if __name__ == "__main__":
     # Chargement brut
     data = charger_donnees_departements(files)
     print(f"[INFO] Dimensions brutes : {data.shape}")
 
-    # Nettoyage
+    # Nettoyage centralisé (inclut traitement dates, virgules, doublons…)
     data = nettoyer_donnees(data, verbose=True)
 
     # Conversion unités
-    data["T"] /= 10
-    data["FF"] /= 10
-    data["P"] = data["PSTAT"] / 10
+    # data["T"] /= 10
+    # data["FF"] /= 10
+    # data["P"] = data["PSTAT"] / 10
 
-    # Colonnes utiles
-    data = data[["date", "T", "U", "RR1", "FF", "DD", "P", "dep"]].dropna()
-
-    # === Visualisations ===
-    boiteAMoustache(data)
-    NuagePointsTemperature(data)
+    # Visualisations météo
     courbe_temperature_par_departement(data)
+    boiteAMoustache(data)
     courbes_variables(data)
-    hist_temperature(data)
     boxplot_temperature(data)
-    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
+    hist_temperature(data)
 
-    # === Corrélation ===
+    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
+
+    # Statistiques descriptives
+    stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
+    print("\n[INFO] Statistiques descriptives :\n", stats)
+
+    # Corrélation par département
     for dep in data["dep"].unique():
         print(f"\n[INFO] Corrélation - Département {dep}")
         heatmap_correlation(data[data["dep"] == dep], dep=dep)
 
-    # === ACP ===
+    # ACP
     features = ["T", "U", "P", "FF"]
     X = StandardScaler().fit_transform(data[features])
     data_pca, explained_var = appliquer_pca(data, features)
@@ -69,26 +77,26 @@ if __name__ == "__main__":
     print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
 
-    # === Clustering ===
+    # Clustering
     methode_du_coude(X)
 
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
     data_pca["cluster"] = kmeans.fit_predict(X)
-
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
-    print("\nCentres des clusters :\n", centres)
+    print("\n[INFO] Centres des clusters :\n", centres)
 
     for dep in data_pca["dep"].unique():
         subset = data_pca[data_pca["dep"] == dep]
         visualisation_clusters_pair(subset, dep)
         visualisation_clusters_3D(subset, dep)
 
-    # === Régression linéaire ===
-    data_pca["T"] = data["T"].values
-    data_pca["U"] = data["U"].values
-    data_pca["P"] = data["P"].values
-    data_pca["FF"] = data["FF"].values
+    # Régression linéaire sur PCA
+    for var in ["T", "U", "P", "FF"]:
+        data_pca[var] = data[var].values
 
-    print("\n[INFO] Régression T+U sur PC1 → PC4")
+    print("\n[INFO] Régression linéaire : prédiction des composantes principales")
     for i in range(1, 5):
         regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
+
+    # Réduction du dataset pour ML (si besoin)
+    data = filtrer_colonnes_utiles(data)
