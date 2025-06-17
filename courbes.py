@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import calendar
 
 
 def boiteAMoustache(df, verbose=False):
@@ -88,14 +87,11 @@ def boxplot_temperature(data, departement_highlight="29"):
         for dep in ordre_deps
     }
 
-    # Création d'une nouvelle colonne avec T * 10 pour l'affichage
-    data["T_affichee"] = data["T"] * 10
-
-    sns.boxplot(data=data, x="dep", y="T_affichee", palette=palette)
+    sns.boxplot(data=data, x="dep", y="T", palette=palette)
 
     plt.title("Répartition des températures par département")
     plt.xlabel("Département")
-    plt.ylabel("Température ×10 (°C)")
+    plt.ylabel("Température (°C)")
     plt.grid(True, axis='y')
     plt.tight_layout()
     plt.show()
@@ -128,32 +124,17 @@ def hist_temperature(data):
         subset = data[data["dep"] == dep]
         plt.hist(subset["T"], bins=50, alpha=0.5, label=f"Dép {dep}")
     ticks = plt.xticks()[0]
-    plt.xticks(ticks, [f"{tick * 10:.0f}" for tick in ticks]) 
+    plt.xticks(ticks, [f"{tick:.0f}" for tick in ticks]) 
     plt.legend()
     plt.title("Histogramme des températures")
     plt.xlabel("Température (°C)")
     plt.ylabel("Fréquence")
     plt.show()
 
-def hist_variable(data):
-    variables = ["U", "FF", "P"]
-    titres = ["Humidité (%)", "Vent moyen (m/s)", "Pression (hPa)"]
 
-    fig, axs = plt.subplots(1, 3, figsize=(18, 5), sharey=False)
-
-    for i, variable in enumerate(variables):
-        ax = axs[i]
-        for dep in data["dep"].unique():
-            subset = data[data["dep"] == dep]
-            ax.hist(subset[variable], bins=50, alpha=0.5, label=f"Dép {dep}")
-        ax.set_title(titres[i])
-        ax.set_xlabel(variable)
-        ax.set_ylabel("Fréquence")
-        ax.legend()
-
-    plt.tight_layout()
-    plt.show()
-
+import matplotlib.pyplot as plt
+import calendar
+import pandas as pd
 
 def courbe_moyenne_par_mois(df: pd.DataFrame, colonne: str = "RR1", label=None):
     if colonne not in df.columns or "date" not in df.columns:
