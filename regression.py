@@ -1,64 +1,34 @@
-
-
-from sklearn.linear_model import *
-from sklearn.metrics import *
-import numpy as np
-import matplotlib.pyplot as plt
-
 def regression_lineaire(df, explicatives, cible):
+    from sklearn.linear_model import LinearRegression
+    from sklearn.metrics import r2_score
+    import matplotlib.pyplot as plt
+    import numpy as np
 
-    print(f"\n Régression : {cible} ~ {', '.join(explicatives)} ")
-
-    X = df[explicatives].values  # (n, p)
-    y = df[cible].values         # (n, )
-
-    model = LinearRegression()
-    model.fit(X, y)
+    X = df[explicatives].values
+    y = df[cible].values
+    model = LinearRegression().fit(X, y)
     y_pred = model.predict(X)
+    score = r2_score(y, y_pred)
 
-    # Coefficients et intercept
-    coeffs = model.coef_
-    intercept = model.intercept_
+    # Département pour titre
+    dep = df["dep"].iloc[0] if "dep" in df.columns else "Inconnu"
+    titre = f"{cible} ~ {' + '.join(explicatives)}"
+    print(f"[{dep}] {titre} | R² multiple = {score:.3f}")
+    
+    # Visualisation 2D par variable explicative
+    for i, var in enumerate(explicatives):
+        x_var = df[var].values.reshape(-1, 1)
+        model_1d = LinearRegression().fit(x_var, y)
+        y_pred_1d = model_1d.predict(x_var)
+        r2_simple = r2_score(y, y_pred_1d)
 
-    # Affichage de la fonction f(x)
-    terme_lineaire = " + ".join([f"{omega:.4f}·{var}" for omega, var in zip(coeffs, explicatives)])
-    print(f"\nForme de la fonction : f(x) = {terme_lineaire} + {intercept:.4f}")
-
-    # Calculs des erreurs
-    mae = mean_absolute_error(y, y_pred)
-    mse = mean_squared_error(y, y_pred)
-    rmse = np.sqrt(mse)
-    rss = np.sum((y - y_pred) ** 2)
-    r2 = r2_score(y, y_pred)
-
-    print(f"\nÉvaluation des erreurs :")
-    print(f"  MAE  : {mae:.4f}")
-    print(f"  MSE  : {mse:.4f}")
-    print(f"  RMSE : {rmse:.4f}")
-    print(f"  RSS  : {rss:.4f}")
-    print(f"  R²   : {r2:.4f}")
-
-    # Visualisation si simple régression
-    if len(explicatives) == 1:
-        plt.figure(figsize=(6, 4))
-        plt.scatter(X, y, alpha=0.3, label='Données réelles')
-        plt.plot(X, y_pred, color='red', label='Régression')
-        plt.xlabel(explicatives[0])
+        plt.figure(figsize=(8, 5))
+        plt.scatter(x_var, y, alpha=0.6, edgecolor='k', label="Données")
+        plt.plot(x_var, y_pred_1d, color='red', linewidth=2, label="Régression simple")
+        plt.xlabel(var)
         plt.ylabel(cible)
-        plt.title(f"Régression : {cible} ~ {explicatives[0]}")
+        plt.title(f"{cible} ~ {var} — Dép {dep}\nR² simple : {r2_simple:.2f} | R² multiple : {score:.2f}")
+        plt.grid(True)
         plt.legend()
-        plt.grid(True)
         plt.tight_layout()
         plt.show()
-    else:
-        # Affichage y réel vs prédit pour cas multiple
-        plt.figure(figsize=(6, 4))
-        plt.scatter(y, y_pred, alpha=0.3)
-        plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--')
-        plt.xlabel("Valeurs réelles")
-        plt.ylabel("Valeurs prédites")
-        plt.title("Régression multiple : Réel vs Prédit")
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
-        

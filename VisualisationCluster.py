@@ -9,7 +9,7 @@ def visualisation_clusters(df_pca, X, features, n_clusters):
     df_pca["cluster"] = clusters
 
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
-    print("\n📍 Centres des clusters dans l'espace original (standardisé) :\n", centres)
+    print("\n Centres des clusters :\n", centres)
 
     plt.figure(figsize=(10, 6))
     sns.scatterplot(

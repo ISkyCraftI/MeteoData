@@ -1,4 +1,4 @@
-<!-- On choisit des années 2000 à aujourd'hui
+On choisit des années 2000 à aujourd'hui
 Analyser 3 départements non cote à cote :
 - 21
 - 29 
@@ -46,7 +46,7 @@ On remarque lorsque le vent vient du nord, il fait plus chaud à Dijon qu'à Bre
 
  Pour le clustering :
  - il faut appliquer un K-means ou un K-median sur leurs donnees
- - il faut expliquer le resultat obtenu -->
+ - il faut expliquer le resultat obtenu
 
 # Pour la regression lineaire :
 # - il faut identifier les variables a expliquer et les variables explicatives correspondantes
