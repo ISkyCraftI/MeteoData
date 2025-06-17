@@ -124,6 +124,8 @@ def hist_temperature(data):
     for dep in data["dep"].unique():
         subset = data[data["dep"] == dep]
         plt.hist(subset["T"], bins=50, alpha=0.5, label=f"Dép {dep}")
+    ticks = plt.xticks()[0]
+    plt.xticks(ticks, [f"{tick * 10:.0f}" for tick in ticks]) 
     plt.legend()
     plt.title("Histogramme des températures")
     plt.xlabel("Température (°C)")

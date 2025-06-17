@@ -126,4 +126,33 @@ if __name__ == "__main__":
     data_pca['U'] = data['U'].values
     data_pca['T'] = data['T'].values
     data_pca['P'] = data['P'].values
-    regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC1')
+    
+    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC1') #0.7
+    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC2') #0.56
+    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC3') #0.43
+    # regression_lineaire(data_pca, explicatives =['FF','T'], cible='PC4') #0.3
+    
+    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC1') #0.68
+    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC2') #0.59
+    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC3') #0.42 
+    # regression_lineaire(data_pca, explicatives =['FF','U'], cible='PC4') #0.3
+    
+    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC1') #0.07
+    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC2') #0.92
+    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC3') #0.98
+    # regression_lineaire(data_pca, explicatives =['FF','P'], cible='PC4') #0.02
+    
+    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC1') #0.94
+    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC2') #0.05
+    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC3') #0.03
+    # regression_lineaire(data_pca, explicatives =['T','U'], cible='PC4') #0.96
+    
+    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC1') #0.68
+    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC2') #0.59
+    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC3') #0.40
+    # regression_lineaire(data_pca, explicatives =['T','P'], cible='PC4') #0.31
+    
+    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC1') #0.69 
+    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC2') #0.6
+    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC3') #0.4
+    # regression_lineaire(data_pca, explicatives =['U','P'], cible='PC4') #0.3
