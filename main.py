@@ -76,25 +76,55 @@ if __name__ == "__main__":
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
 
     #  Clustering 
-    methode_du_coude(X)
+    # methode_du_coude(X)
 
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
     data_pca["cluster"] = kmeans.fit_predict(X)
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
     print("\n[INFO] Centres des clusters :\n", centres)
 
-    for dep in data_pca["dep"].unique():
-        subset = data_pca[data_pca["dep"] == dep]
-        visualisation_clusters_pair(subset, dep)
-        visualisation_clusters_3D(subset, dep)
+    # for dep in data_pca["dep"].unique():
+    #     subset = data_pca[data_pca["dep"] == dep]
+    #     visualisation_clusters_pair(subset, dep)
+    #     visualisation_clusters_3D(subset, dep)
 
     #  Régression linéaire sur PCA 
-    for var in ["T", "U", "P", "FF"]:
-        data_pca[var] = data_clean[var].values
+    # for var in ["T", "U", "P", "FF"]:
+    #     data_pca[var] = data_clean[var].values
 
-    print("\n[INFO] Régression linéaire : prédiction des composantes principales")
-    for i in range(1, 5):
-        regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
+    # print("\n[INFO] Régression linéaire : prédiction des composantes principales")
+    # for i in range(1, 5):
+    #     regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
 
-    # Optionnel : réduire les colonnes
-    data = filtrer_colonnes_utiles(data)
+print(data.columns)   
+print(data_pca.columns)  
+data_pca['FF'] = data_clean['FF'].values
+data_pca['U'] = data_clean['U'].values
+data_pca['T'] = data_clean['T'].values
+data_pca['P'] = data_clean['P'].values
+            
+combinations = [
+    (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
+    (['FF', 'U'], 'PC1'), (['FF', 'U'], 'PC2'), (['FF', 'U'], 'PC3'), (['FF', 'U'], 'PC4'),
+    (['FF', 'P'], 'PC1'), (['FF', 'P'], 'PC2'), (['FF', 'P'], 'PC3'), (['FF', 'P'], 'PC4'),
+    (['T', 'U'], 'PC1'),  (['T', 'U'], 'PC2'),  (['T', 'U'], 'PC3'),  (['T', 'U'], 'PC4'),
+    (['T', 'P'], 'PC1'),  (['T', 'P'], 'PC2'),  (['T', 'P'], 'PC3'),  (['T', 'P'], 'PC4'),
+    (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
+]
+
+# for dep in data_pca['dep'].unique():
+#     sous_ensemble = data_pca[data_pca['dep'] == dep]
+
+#     if len(sous_ensemble) < 10:
+#         continue
+
+#     print(f"\nDÉPARTEMENT : {dep}\n")
+    
+#     for explicatives, cible in combinations:
+#         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
+#         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+
+#     # Optionnel : réduire les colonnes
+#     data = filtrer_colonnes_utiles(data)
+
+
