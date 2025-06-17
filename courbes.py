@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import calendar
-
 
 
 def boiteAMoustache(df, verbose=False):
@@ -97,6 +95,27 @@ def boxplot_temperature(data, departement_highlight="29"):
     plt.grid(True, axis='y')
     plt.tight_layout()
     plt.show()
+    
+def boxplot_variable(data):
+    variables = ["U", "FF", "P"]
+    titres = ["Humidité (%)", "Vent moyen (m/s)", "Pression (hPa)"]
+
+    ordre_deps = sorted(data["dep"].unique(), reverse=True)
+    data["dep"] = pd.Categorical(data["dep"], categories=ordre_deps, ordered=True)
+
+    fig, axs = plt.subplots(1, 3, figsize=(18, 6), sharey=False)
+
+    for i, variable in enumerate(variables):
+        sns.boxplot(data=data, x="dep", y=variable, ax=axs[i], palette="pastel")
+        axs[i].set_title(titres[i])
+        axs[i].set_xlabel("Département")
+        axs[i].set_ylabel(variable)
+        axs[i].tick_params(axis='x', rotation=90)
+        axs[i].grid(True, axis='y')
+
+    plt.tight_layout()
+    plt.show()
+
 
 
 def hist_temperature(data):
@@ -112,6 +131,10 @@ def hist_temperature(data):
     plt.ylabel("Fréquence")
     plt.show()
 
+
+import matplotlib.pyplot as plt
+import calendar
+import pandas as pd
 
 def courbe_moyenne_par_mois(df: pd.DataFrame, colonne: str = "RR1", label=None):
     if colonne not in df.columns or "date" not in df.columns:
