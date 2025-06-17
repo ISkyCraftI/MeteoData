@@ -2,53 +2,93 @@ import numpy as np
 import pandas as pd
 import os
 
-from VisualtionsRedDim import *
 from nettoyage import *
-from reductionDim import *
 from courbes import *
+from VisualtionsRedDim import *
+from reductionDim import *
+from methodeCoude import *
+from regression import regression_lineaire
 from VisualisationCluster import *
 
-# Chargement multi-départements
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+# Dictionnaire des fichiers multi-départements
 files = {
     "29": "D29/H_29_2020-2023.csv.gz",
     "21": "D21/H_21_previous-2020-2023.csv.gz",
-    # "2A": "H_2A_xxxx.csv.gz"  # optionnel
 }
 
-# Chargement du fichier (gzip)
-def charger_donnees(path_csv):
-    print(f"[INFO] Chargement : {path_csv}")
-    df = pd.read_csv(path_csv, sep=';', compression='infer', low_memory=False)
-    df.columns = df.columns.str.strip()  # Enlève les espaces autour des noms de colonnes
-    print(f"[INFO] Dimensions brutes : {df.shape}")
-    return df
+def charger_donnees_departements(files_dict):
+    dfs = []
+    for dep, path in files_dict.items():
+        print(f"[INFO] Chargement : {path}")
+        df = pd.read_csv(path, sep=';', compression='infer', low_memory=False)
+        df["dep"] = dep
+        df.columns = df.columns.str.strip()
+        dfs.append(df)
+    return pd.concat(dfs, ignore_index=True)
 
-# Génération d’un échantillon de test
-def jeuDeTest():
-    fichier = "D29/H_29_2024-2025.csv.gz"
-    df = charger_donnees(fichier)
-    df_test = df.copy()
-    df_test.to_csv("jeu_de_test_100.csv", index=False, sep=';')
-    print("[INFO] Jeu de test sauvegardé : jeu_de_test_100.csv")
-
-# Programme principal
+# ======== Programme principal ========
 if __name__ == "__main__":
-    fichier = "D29/H_29_2024-2025.csv.gz"  # ou "jeu_de_test_100.csv"
-    df_brut = charger_donnees(fichier)
+    # Chargement brut
+    data = charger_donnees_departements(files)
+    print(f"[INFO] Dimensions brutes : {data.shape}")
 
-    # Nettoyage centralisé
-    df = nettoyer_donnees(df_brut, verbose=True)
-    print(df.columns.tolist())
+    # Nettoyage
+    data = nettoyer_donnees(data, verbose=True)
 
-    # Corrélation / Réduction de dimension (si nécessaire)
-    correlation(df, seuil_corr=0.5)
-    df = supprimer_colonnes_correlees(df, seuil=0.95)
+    # Conversion unités
+    data["T"] /= 10
+    data["FF"] /= 10
+    data["P"] = data["PSTAT"] / 10
 
-    # Affichages / Visualisations
-    NuagePointsTemperature(df)
-    courbe_temperature_par_departement(df)
-    courbes_variables(df)
-    boiteAMoustache(df, verbose=True)
-    hist_temperature(df)
-    boxplot_temperature(df)
-    courbe_moyenne_par_mois(df, colonne="T")
+    # Colonnes utiles
+    data = data[["date", "T", "U", "RR1", "FF", "DD", "P", "dep"]].dropna()
+
+    # === Visualisations ===
+    boiteAMoustache(data)
+    NuagePointsTemperature(data)
+    courbe_temperature_par_departement(data)
+    courbes_variables(data)
+    hist_temperature(data)
+    boxplot_temperature(data)
+    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
+
+    # === Corrélation ===
+    for dep in data["dep"].unique():
+        print(f"\n[INFO] Corrélation - Département {dep}")
+        heatmap_correlation(data[data["dep"] == dep], dep=dep)
+
+    # === ACP ===
+    features = ["T", "U", "P", "FF"]
+    X = StandardScaler().fit_transform(data[features])
+    data_pca, explained_var = appliquer_pca(data, features)
+    data_pca["dep"] = data["dep"].values
+
+    print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
+    print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
+
+    # === Clustering ===
+    methode_du_coude(X)
+
+    kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
+    data_pca["cluster"] = kmeans.fit_predict(X)
+
+    centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
+    print("\nCentres des clusters :\n", centres)
+
+    for dep in data_pca["dep"].unique():
+        subset = data_pca[data_pca["dep"] == dep]
+        visualisation_clusters_pair(subset, dep)
+        visualisation_clusters_3D(subset, dep)
+
+    # === Régression linéaire ===
+    data_pca["T"] = data["T"].values
+    data_pca["U"] = data["U"].values
+    data_pca["P"] = data["P"].values
+    data_pca["FF"] = data["FF"].values
+
+    print("\n[INFO] Régression T+U sur PC1 → PC4")
+    for i in range(1, 5):
+        regression_lineaire(data_pca, explicatives=["T", "U"], cible=f"PC{i}")
