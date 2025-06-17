@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 from nettoyage import conversion_virgules
@@ -9,10 +10,7 @@ from VisualtionsRedDim import *
 from reductionDim import *
 from methodeCoude import *
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+from sklearn import *
 
 from regression import regression_lineaire
 
@@ -149,3 +147,35 @@ for dep in data_pca['dep'].unique():
     for explicatives, cible in combinations:
         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+    
+    
+    # Variables explicatives (features)
+X_lda = data_pca[["PC1", "PC2", "PC3", "PC4"]]
+y_lda = data_pca["cluster"]
+
+# Normalisation (même si LDA est plus robuste, c’est bon à faire si les features varient)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_lda)
+
+# Découpage train/test
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_lda, test_size=0.3, random_state=42, stratify=y_lda)
+
+# LDA
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_train_lda = lda.fit_transform(X_train, y_train)
+X_test_lda = lda.transform(X_test)
+
+# Prédictions
+y_pred = lda.predict(X_test)
+
+# Évaluation
+print("\nClassification Report :")
+print(classification_report(y_test, y_pred))
+
+print("\nMatrice de confusion :")
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap="Blues")
+plt.xlabel("Prédictions")
+plt.ylabel("Vrai")
+plt.title("Matrice de confusion LDA")
+plt.tight_layout()
+plt.show()
