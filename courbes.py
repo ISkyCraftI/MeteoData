@@ -133,6 +133,26 @@ def hist_temperature(data):
     plt.ylabel("Fréquence")
     plt.show()
 
+def hist_variable(data):
+    variables = ["U", "FF", "P"]
+    titres = ["Humidité (%)", "Vent moyen (m/s)", "Pression (hPa)"]
+
+    fig, axs = plt.subplots(1, 3, figsize=(18, 5), sharey=False)
+
+    for i, variable in enumerate(variables):
+        ax = axs[i]
+        for dep in data["dep"].unique():
+            subset = data[data["dep"] == dep]
+            ax.hist(subset[variable], bins=50, alpha=0.5, label=f"Dép {dep}")
+        ax.set_title(titres[i])
+        ax.set_xlabel(variable)
+        ax.set_ylabel("Fréquence")
+        ax.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
 def courbe_moyenne_par_mois(df: pd.DataFrame, colonne: str = "RR1", label=None):
     if colonne not in df.columns or "date" not in df.columns:
         print("Colonnes manquantes : il faut 'date' et", colonne)
