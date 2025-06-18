@@ -15,28 +15,25 @@ def traiter_par_blocs(fichier, dep, chunk_size=1000):
         chunk['dep'] = dep
         try:
             chunk = nettoyer_donnees(chunk, verbose=False)
+            chunk["P"] = chunk["PSTAT"]
 
-            # On vérifie que la colonne "date" est bien présente après nettoyage
-            if "date" not in chunk.columns:
-                raise ValueError("Colonne 'date' manquante après nettoyage.")
-
-            # Filtrage minimal pour éviter les NaN massifs
             features = ["T", "U", "P", "FF"]
             chunk = chunk.dropna(subset=features)
 
-            # PCA locale
             X = StandardScaler().fit_transform(chunk[features])
             pca_df, _ = appliquer_pca(chunk, features)
             pca_df["dep"] = dep
-            pca_df["cluster"] = KMeans(n_clusters=3, random_state=42, n_init='auto').fit_predict(X)
+            pca_df["cluster"] = KMeans(n_clusters=4, random_state=42, n_init='auto').fit_predict(X)
 
-            # Réinjecte les variables d'origine + date
-            for var in features + ["date"]:
+            # Réinjection des colonnes utiles
+            for var in features:
                 pca_df[var] = chunk[var].values
+
+            # ✅ Ajouter la colonne date pour les courbes temporelles
+            pca_df["date"] = chunk["date"].values
 
             resultats.append(pca_df)
         except Exception as e:
             print(f"[{dep}] Chunk {i} ignoré : {e}")
-
+    
     return pd.concat(resultats, ignore_index=True)
-
