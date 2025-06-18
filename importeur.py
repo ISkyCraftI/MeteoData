@@ -52,6 +52,6 @@ def charger_donnees_departements(fichiers_par_dep):
     return pd.concat(dfs, ignore_index=True)
 
 def filtrer_colonnes_utiles(df):
-    colonnes = ["date", "T", "U", "RR1", "FF", "DD", "PSTAT", "P", "dep"]
+    colonnes = ["date", "T", "U", "RR1", "FF", "DD", "P", "dep"]
     colonnes_presentes = [col for col in colonnes if col in df.columns]
     return df[colonnes_presentes].copy()

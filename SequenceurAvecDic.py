@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 from importeur import *
+from sequenceur2 import traiter_par_blocs
 from nettoyage import nettoyer_donnees
 from moyMedEcTyp import statistiques
 from courbes import *
@@ -14,45 +15,50 @@ from regression import regression_lineaire
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# Programme principal
+# === Programme principal ===
 if __name__ == "__main__":
+    fichiers_detectes = detecter_fichiers_par_departement(racine=".")
+    df_global = []
+    resume_chunks = {}
 
-    # Chargement brut
-    data = charger_donnees_departements(files)  
+    for dep, fichiers in fichiers_detectes.items():
+        total_chunks = 0
+        valid_chunks = 0
 
-    print(f"[INFO] Dimensions brutes : {data.shape}")
+        for fichier in fichiers:
+            print(f"\n===== Traitement par blocs : {fichier} =====")
+            resultat, total, valides = traiter_par_blocs(fichier, dep, chunk_size=10000)
+            df_global.append(resultat)
+            total_chunks += total
+            valid_chunks += valides
 
-    # Nettoyage : retourne uniquement les données horaires
-    data = nettoyer_donnees(data, verbose=True)
+        resume_chunks[dep] = (valid_chunks, total_chunks)
 
-    # Conversion unités
-    data["P"] = data["PSTAT"]
+    # Résumé global
+    print("\n===== Résumé du traitement par département =====")
+    for dep, (valides, total) in resume_chunks.items():
+        print(f"[{dep}] Chunks valides : {valides}/{total} ({(valides/total)*100:.1f}%)")
+
+    # Fusion des résultats
+    data_pca = pd.concat(df_global, ignore_index=True)
+
+    # === Visualisations météo ===
+    boiteAMoustache(data_pca)
+    correlation(data_pca, seuil_corr=0.5)
+    courbe_temperature_par_departement(data_pca)
+    courbes_variables(data_pca)
+    boxplot_temperature(data_pca)
+    boxplot_variable(data_pca)
+    hist_temperature(data_pca)
+    hist_variable(data_pca)
 
     # Statistiques descriptives
-    #  Visualisations météo (par heure) A DECOMMENTER
-    boiteAMoustache(data)
-    correlation(data,seuil_corr=0.5)
-    courbe_temperature_par_departement(data)
-    courbes_variables(data)
-    boxplot_temperature(data)
-    boxplot_variable(data)
-    hist_temperature(data)
-    hist_variable(data)
-    
-    # Statistiques descriptives (sur les données horaires)
-    stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
+    stats = data_pca.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 
-    # Corrélation par département A DECOMMENTER
-    for dep in data["dep"].unique():
-        print(f"\n[INFO] Corrélation - Département {dep}")
-        heatmap_correlation(data[data["dep"] == dep], dep=dep)
-    print("COLONNES\n : ")
-    data.columns 
-
-    #  ACP 
+    # ACP
     features = ["T", "U", "P", "FF"]
-    data_clean = data.dropna(subset=features).copy()
+    data_clean = data_pca.dropna(subset=features).copy()
     X = StandardScaler().fit_transform(data_clean[features])
     data_pca, explained_var = appliquer_pca(data_clean, features)
     data_pca["dep"] = data_clean["dep"].values
@@ -60,21 +66,16 @@ if __name__ == "__main__":
     print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
 
-    #  Clustering 
-    # methode_du_coude(X)
-
+    # Clustering
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
     data_pca["cluster"] = kmeans.fit_predict(X)
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
     print("\n[INFO] Centres des clusters :\n", centres)
 
-    print(data.columns)
-    print(data_pca.columns)
-    data_pca['FF'] = data_clean['FF'].values
-    data_pca['U'] = data_clean['U'].values
-    data_pca['T'] = data_clean['T'].values
-    data_pca['P'] = data_clean['P'].values
+    for var in features:
+        data_pca[var] = data_clean[var].values
 
+    # Régressions multiples
     combinations = [
         (['FF', 'T'], 'PC1'), (['FF', 'T'], 'PC2'), (['FF', 'T'], 'PC3'), (['FF', 'T'], 'PC4'),
         (['FF', 'U'], 'PC1'), (['FF', 'U'], 'PC2'), (['FF', 'U'], 'PC3'), (['FF', 'U'], 'PC4'),
@@ -88,12 +89,13 @@ if __name__ == "__main__":
         sous_ensemble = data_pca[data_pca['dep'] == dep]
         if len(sous_ensemble) < 10:
             continue
+
         print(f"\nDÉPARTEMENT : {dep}\n")
         for explicatives, cible in combinations:
             print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
             regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
 
-    # Classification KNN et LDA via la fonction utilitaire
+    # Classification finale
     resultats_par_dep = classifier(
         data_pca,
         features=["PC1", "PC2", "PC3", "PC4"],

@@ -22,8 +22,8 @@ from regression import regression_lineaire
 # Chargement multi-départements
 files = {
     "29": "D29/H_29_2020-2023.csv.gz",
-    "21": "D21/H_21_previous-2020-2023.csv.gz",
-    # "2A": "H_2A_xxxx.csv.gz"  # optionnel
+    "21": "D21/H_21_2020-2023.csv.gz",
+    "06" : "D06/H_06_2020-2023.csv.gz",
 }
 
 def charger_donnees_departements(files_dict):
@@ -75,10 +75,10 @@ if __name__ == "__main__":
     data["P"] = data["PSTAT"]
     
     # Courbes moyennes mensuelles pour chaque variable
-    # courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
-    # courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
-    # courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
-    # courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="RR1", label="Précipitations", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="U", label="Humidité", group_by_dep=True)
+    courbe_moyenne_par_mois(data, colonne="FF", label="Vent moyen", group_by_dep=True)
     
     # Conversion des unités
     data["P"] = data["PSTAT"] # pression en hPa

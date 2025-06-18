@@ -22,14 +22,11 @@ if __name__ == "__main__":
     df_global = []
 
     for dep, fichiers in fichiers_detectes.items():
-<<<<<<< HEAD
         print(f"\n Analyse du département {dep} ")
-=======
         for fichier in fichiers:
             print(f"\n===== Traitement par blocs : {fichier} =====")
             resultat = traiter_par_blocs(fichier, dep, chunk_size=10000)
             df_global.append(resultat)
->>>>>>> d6ae18b40cb077b79a81cb8a719b3a02925fc5e1
 
     data_pca = pd.concat(df_global, ignore_index=True)
 

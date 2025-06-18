@@ -15,7 +15,6 @@ def traiter_par_blocs(fichier, dep, chunk_size=1000):
         chunk['dep'] = dep
         try:
             chunk = nettoyer_donnees(chunk, verbose=False)
-            chunk["P"] = chunk["PSTAT"]
 
             # On vérifie que la colonne "date" est bien présente après nettoyage
             if "date" not in chunk.columns:
