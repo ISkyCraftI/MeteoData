@@ -87,14 +87,7 @@ def dateRewrite(df):
 
 # ✅
 def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
-    """
-    Nettoie un DataFrame météo pour une analyse horaire (clustering, ACP, ML).
 
-    Étapes :
-    - Nettoyage classique (lignes vides, colonnes peu remplies, constantes, etc.)
-    - Conversion des formats (virgules, date ISO)
-    - Moyenne unique par heure pour chaque 'dep'
-    """
     df = df.copy()
 
     if verbose: print("[INFO] Nettoyage des lignes trop incomplètes...")

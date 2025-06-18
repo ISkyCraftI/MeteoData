@@ -15,7 +15,7 @@ from regression import regression_lineaire
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# === Programme principal ===
+# Programme principal
 if __name__ == "__main__":
 
     # Chargement brut
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # Conversion unités
     data["P"] = data["PSTAT"]
 
-    # === Génération de séquences temporelles ===
+    # Génération de séquences temporelles 
     colonnes_seq = ["T", "U", "P", "FF"]
     print("[INFO] Génération des séquences pour apprentissage séquentiel…")
     X_seq, y_seq = generer_sequences(data, colonnes_features=colonnes_seq, colonne_cible="T", n_pas=24, step=1)

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     all_data = []
 
     for dep, fichiers in fichiers_detectes.items():
-        print(f"\n====== Analyse du département {dep} ======")
+        print(f"\n Analyse du département {dep} ")
 
         # Lecture et concaténation des fichiers
         if isinstance(fichiers, list):
