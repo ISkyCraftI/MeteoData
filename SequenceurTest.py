@@ -17,7 +17,7 @@ from sklearn.cluster import KMeans
 
 # === Programme principal ===
 if __name__ == "__main__":
-    # Chargement automatique
+    # Chargement automatique par blocs
     fichiers_detectes = detecter_fichiers_par_departement(racine=".")
     df_global = []
 
@@ -29,9 +29,46 @@ if __name__ == "__main__":
 
     data_pca = pd.concat(df_global, ignore_index=True)
 
+    # Visualisations météo (à partir de data_pca)
+    boiteAMoustache(data_pca)
+    correlation(data_pca, seuil_corr=0.5)
+    courbe_temperature_par_departement(data_pca)
+    courbes_variables(data_pca)
+    boxplot_temperature(data_pca)
+    boxplot_variable(data_pca)
+    hist_temperature(data_pca)
+    hist_variable(data_pca)
+
     # Statistiques descriptives
     stats = data_pca.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
+
+    # Corrélations
+    for dep in data_pca["dep"].unique():
+        print(f"\n[INFO] Corrélation - Département {dep}")
+        heatmap_correlation(data_pca[data_pca["dep"] == dep], dep=dep)
+
+    print("[INFO] Colonnes disponibles :", data_pca.columns)
+
+    # ACP
+    features = ["T", "U", "P", "FF"]
+    data_clean = data_pca.dropna(subset=features).copy()
+    X = StandardScaler().fit_transform(data_clean[features])
+    data_pca, explained_var = appliquer_pca(data_clean, features)
+    data_pca["dep"] = data_clean["dep"].values
+
+    print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
+    print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
+
+    # Clustering
+    kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
+    data_pca["cluster"] = kmeans.fit_predict(X)
+    centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
+    print("\n[INFO] Centres des clusters :\n", centres)
+
+    # Restauration des features brutes dans le PCA
+    for var in features:
+        data_pca[var] = data_clean[var].values
 
     # Régressions multiples
     combinations = [
@@ -53,7 +90,7 @@ if __name__ == "__main__":
             print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
             regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
 
-    # Classification KNN et LDA via la fonction utilitaire
+    # Classification KNN et LDA
     resultats_par_dep = classifier(
         data_pca,
         features=["PC1", "PC2", "PC3", "PC4"],
