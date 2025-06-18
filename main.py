@@ -16,9 +16,9 @@ from sklearn.cluster import KMeans
 
 # === Programme principal ===
 if __name__ == "__main__":
-    # Chargement automatique
-    fichiers_detectes = detecter_fichiers_par_departement(racine=".")
-    data = charger_donnees_departements(fichiers_detectes)
+
+    # Chargement brut
+    data = charger_donnees_departements(files)  
 
     print(f"[INFO] Dimensions brutes : {data.shape}")
 

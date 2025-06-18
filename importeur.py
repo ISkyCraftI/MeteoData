@@ -2,12 +2,22 @@ import os
 import glob
 import pandas as pd
 
+# === Chargement multi-départements ===
+files = {
+    "29": "D29/H_29_2020-2023.csv.gz",
+    "21": "D21/H_21_2020-2023.csv.gz",
+    "06" : "D06/H_06_2020-2023.csv.gz",
+}
+
+
 # === Palette personnalisée des départements ===
 COULEURS_DEPS = {
     "21": "#8f2035",   # Bordeaux (effet vin/cassis)
-    "29": "#bbd500",   # Vert vif
-    "06": "#4a90e2",   # Bleu doux (exemple)
+    "29": "#bbd500",    # Vert vif
+    "06": "#87ceeb"  # Bleu ciel
+
     # Ajoute ici d'autres départements si tu veux des couleurs spécifiques
+
 }
 
 def detecter_fichiers_par_departement(racine=".", extension="*.csv.gz"):
