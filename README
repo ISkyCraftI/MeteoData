@@ -9,6 +9,24 @@ Le données se terminent le 18/06/2025
 liens utiles : 
 - https://www.data.gouv.fr/fr/datasets/donnees-climatologiques-de-base-horaires/
 
+
+main.py -> utilisé pour un seul fichier 
+mainSequenceur.py -> utilisé pour 01/01/2000 à 18/06/2025
+    Le nombre de données n'est pas le même d'un département à l'autre, particulièrement le 29 avec deux fois plus de données, ce qui fausse des courbes, contrairement à dans mais ou les données sont équivalentes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Un rapport est à rendre le mercredi 18 juin 23h59
 Plan
 1. Nettoyer la BDD -> Fait

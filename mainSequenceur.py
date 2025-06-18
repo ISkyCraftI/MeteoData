@@ -81,15 +81,15 @@ if __name__ == "__main__":
         (['U', 'P'], 'PC1'),  (['U', 'P'], 'PC2'),  (['U', 'P'], 'PC3'),  (['U', 'P'], 'PC4'),
     ]
 
-    for dep in data_pca['dep'].unique():
-        sous_ensemble = data_pca[data_pca['dep'] == dep]
-        if len(sous_ensemble) < 10:
-            continue
+    # for dep in data_pca['dep'].unique():
+    #     sous_ensemble = data_pca[data_pca['dep'] == dep]
+    #     if len(sous_ensemble) < 10:
+    #         continue
 
-        print(f"\nDÉPARTEMENT : {dep}\n")
-        for explicatives, cible in combinations:
-            print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
-            regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
+    #     print(f"\nDÉPARTEMENT : {dep}\n")
+    #     for explicatives, cible in combinations:
+    #         print(f"\nRégression : {cible} ~ {' + '.join(explicatives)}")
+    #         regression_lineaire(sous_ensemble, explicatives=explicatives, cible=cible)
 
     # Classification KNN et LDA
     resultats_par_dep = classifier(
