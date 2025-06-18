@@ -18,7 +18,7 @@ from sklearn.cluster import KMeans
 #  Programme principal 
 if __name__ == "__main__":
     # Chargement brut
-    data = charger_donnees_departements(files)
+    data = charger_donnees_departements(files)  
     print(f"[INFO] Dimensions brutes : {data.shape}")
 
     # Nettoyage : retourne uniquement les données horaires
