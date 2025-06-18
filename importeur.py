@@ -6,7 +6,7 @@ import pandas as pd
 files = {
     "29": "D29/H_29_2020-2023.csv.gz",
     "21": "D21/H_21_2020-2023.csv.gz",
-    "06" : "D06/H_06_2020-2023.csv.gz",
+    "06": "D06/H_06_2020-2023.csv.gz",
 }
 
 
@@ -38,18 +38,41 @@ def detecter_fichiers_par_departement(racine=".", extension="*.csv.gz"):
 
     return fichiers_par_dep
 
-def charger_donnees_departements(fichiers_par_dep):
+# def charger_donnees_departements(fichiers_par_dep):
+#     """
+#     Charge tous les fichiers détectés et ajoute une colonne 'dep'.
+#     """
+#     dfs = []
+#     for dep, fichiers in fichiers_par_dep.items():
+#         for file in fichiers:
+#             df = pd.read_csv(file, compression='gzip', sep=';', low_memory=False)
+#             df["dep"] = dep
+#             df.columns = df.columns.str.strip()
+#             dfs.append(df)
+#     return pd.concat(dfs, ignore_index=True)
+
+
+def charger_donnees_departements(files_dict):
     """
-    Charge tous les fichiers détectés et ajoute une colonne 'dep'.
+    Charge tous les fichiers d’un dictionnaire {dep: fichier_path}
+    et concatène les DataFrame avec ajout d’une colonne 'dep'.
     """
     dfs = []
-    for dep, fichiers in fichiers_par_dep.items():
-        for file in fichiers:
-            df = pd.read_csv(file, compression='gzip', sep=';', low_memory=False)
+    for dep, filepath in files_dict.items():
+        try:
+            print(f"[INFO] Chargement {dep} depuis {filepath}...")
+            df = pd.read_csv(filepath, compression='gzip', sep=';', low_memory=False)
             df["dep"] = dep
-            df.columns = df.columns.str.strip()
+            df.columns = df.columns.str.strip()  # Nettoyage des noms de colonnes
             dfs.append(df)
+        except Exception as e:
+            print(f"[ERREUR] Impossible de charger le fichier pour le département {dep} : {e}")
+    
+    if not dfs:
+        raise ValueError("Aucune donnée chargée. Vérifiez vos fichiers.")
+    
     return pd.concat(dfs, ignore_index=True)
+
 
 def filtrer_colonnes_utiles(df):
     colonnes = ["date", "T", "U", "RR1", "FF", "DD", "P", "dep"]
