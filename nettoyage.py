@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-# ✅
+# 
 def conversion_virgules(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
     df = df.copy()
     cols_concernees = []
@@ -30,14 +30,14 @@ def conversion_virgules(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
 
     return df
 
-# ✅
+# 
 def nettoyer_lignes(df, seuil=0.1):
     seuil_abs = max(1, int(seuil * df.shape[1]))
     df = df.dropna(thresh=seuil_abs)
     df = df.reset_index(drop=True)
     return df
 
-# ✅
+# 
 def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
     valeurs_non_nulles = df.count()
     colonnes_a_supprimer = valeurs_non_nulles[valeurs_non_nulles < min_non_nan].index.tolist()
@@ -47,7 +47,7 @@ def supprimer_colonnes_peu_remplies(df, min_non_nan=5, verbose=False):
 
     return df.drop(columns=colonnes_a_supprimer).reset_index(drop=True)
 
-# ✅
+# 
 def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     colonnes_a_supprimer = []
     for col in df.columns[2:]:
@@ -72,7 +72,7 @@ def supprimer_colonnes_constantes(df, seuil_variation=0.1, verbose=False):
     df.reset_index(drop=True, inplace=True)
     return df
 
-# ✅
+# 
 def dateRewrite(df):
     # Vérifie que la colonne existe
     if 'AAAAMMJJHH' not in df.columns:
@@ -85,7 +85,7 @@ def dateRewrite(df):
     df['AAAAMMJJHH'] = df['AAAAMMJJHH'].dt.strftime('%Y-%m-%dT%H:00:00')
     return df
 
-# ✅
+# 
 def nettoyer_donnees(df: pd.DataFrame, verbose=False) -> pd.DataFrame:
 
     df = df.copy()

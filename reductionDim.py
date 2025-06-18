@@ -54,6 +54,6 @@ def appliquer_pca(df, features, n_components=4):
     columns = [f"PC{i+1}" for i in range(n_components)]
     df_pca = pd.DataFrame(X_pca, columns=columns, index=df.index)
 
-    return df_pca, pca.explained_variance_ratio_
+    return df_pca,  pca.explained_variance_ratio_
 
 

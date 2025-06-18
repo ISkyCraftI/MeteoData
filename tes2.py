@@ -23,7 +23,7 @@ from regression import regression_lineaire
 files = {
     "29": "D29/H_29_2020-2023.csv.gz",
     "21": "D21/H_21_2020-2023.csv.gz",
-    "06" : "D06/H_06_2020-2023.csv.gz",
+    "06": "D06/H_06_2020-2023.csv.gz"  
 }
 
 def charger_donnees_departements(files_dict):
@@ -70,9 +70,6 @@ if __name__ == "__main__":
 
     # Nettoyage : retourne uniquement les données horaires
     data = nettoyer_donnees(data, verbose=True)
-
-    # Conversion unités
-    data["P"] = data["PSTAT"]
     
     # Courbes moyennes mensuelles pour chaque variable
     courbe_moyenne_par_mois(data, colonne="T", label="Température", group_by_dep=True)
@@ -88,20 +85,20 @@ if __name__ == "__main__":
     print("\nStatistiques descriptives :\n", stats)
 
     # Courbes temporelles
-    boiteAMoustache(data)
-    correlation(data,seuil_corr=0.5)
-    courbe_temperature_par_departement(data)
-    courbes_variables(data)
-    boxplot_temperature(data)
-    boxplot_variable(data)
-    hist_temperature(data)
-    hist_variable(data)
+    # boiteAMoustache(data)
+    # correlation(data,seuil_corr=0.5)
+    # courbe_temperature_par_departement(data)
+    # courbes_variables(data)
+    # boxplot_temperature(data)
+    # boxplot_variable(data)
+    # hist_temperature(data)
+    # hist_variable(data)
 
     # Corrélations par département
     for dep in data["dep"].unique():    
         print(f"\nCorrélation pour le département {dep} :")
         df_dep = data[data["dep"] == dep]
-        heatmap_correlation(df_dep, dep = dep)
+        # heatmap_correlation(df_dep, dep = dep)
 
     # PCA
     features = ["T", "U", "P", "FF"]
@@ -114,7 +111,7 @@ if __name__ == "__main__":
     print(f"Variance expliquée par les composantes 3 et 4 : {explained_var[2]:.2%} + {explained_var[3]:.2%} = {explained_var[2:4].sum():.2%}")
 
     # Clustering
-    methode_du_coude(X)
+    # methode_du_coude(X)
 
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
     data_pca["cluster"] = kmeans.fit_predict(X)
@@ -128,9 +125,9 @@ if __name__ == "__main__":
     for dep in departements:
         subset = data_pca[data_pca["dep"] == dep].copy()
 
-        visualisation_clusters_pair(subset, dep)
+        # visualisation_clusters_pair(subset, dep)
         
-        visualisation_clusters_3D(subset, dep)  
+        # visualisation_clusters_3D(subset, dep)  
         
     print(data.columns)   
     print(data_pca.columns)  

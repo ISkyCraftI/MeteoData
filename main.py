@@ -40,6 +40,7 @@ if __name__ == "__main__":
     hist_variable(data)
     
     # Statistiques descriptives (sur les données horaires)
+
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 

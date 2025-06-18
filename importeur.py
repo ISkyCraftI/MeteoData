@@ -56,7 +56,12 @@ def charger_donnees_departements(files_dict):
     """
     Charge tous les fichiers d’un dictionnaire {dep: fichier_path}
     et concatène les DataFrame avec ajout d’une colonne 'dep'.
+
+def charger_donnees_departements(fichiers_par_dep):
     """
+    #Charge tous les fichiers détectés et ajoute une colonne 'dep'.
+
+    
     dfs = []
     for dep, filepath in files_dict.items():
         try:

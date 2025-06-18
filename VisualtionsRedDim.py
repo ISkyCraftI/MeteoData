@@ -42,7 +42,7 @@ def correlation(df, seuil_corr):
         linewidths=0.5,
         linecolor='white'
     )
-    plt.title(f"Precipitations  ≥ {seuil_nb} corrélations fortes (temperatures) (≥ {seuil_corr})")
+    plt.title(f"Heatmap de nos colonnes")
     plt.xticks(rotation=45, ha='right')
     plt.grid(True, axis='x')
     plt.tight_layout()
