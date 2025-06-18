@@ -14,7 +14,7 @@ from regression import regression_lineaire
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# === Programme principal ===
+# Programme principal
 if __name__ == "__main__":
 
     # Chargement brut
@@ -28,6 +28,15 @@ if __name__ == "__main__":
     # Conversion unités
     data["P"] = data["PSTAT"]
 
+<<<<<<< HEAD
+    # Génération de séquences temporelles 
+    colonnes_seq = ["T", "U", "P", "FF"]
+    print("[INFO] Génération des séquences pour apprentissage séquentiel…")
+    X_seq, y_seq = generer_sequences(data, colonnes_features=colonnes_seq, colonne_cible="T", n_pas=24, step=1)
+    print(f"[INFO] Forme X_seq : {X_seq.shape} | y_seq : {y_seq.shape}")
+
+    # Statistiques descriptives
+=======
     #  Visualisations météo (par heure) A DECOMMENTER
     boiteAMoustache(data)
     correlation(data,seuil_corr=0.5)
@@ -39,6 +48,7 @@ if __name__ == "__main__":
     hist_variable(data)
     
     # Statistiques descriptives (sur les données horaires)
+>>>>>>> d6ae18b40cb077b79a81cb8a719b3a02925fc5e1
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 
