@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 
 from importeur import *
-from sequenceur import generer_sequences
 from nettoyage import nettoyer_donnees
 from moyMedEcTyp import statistiques
 from courbes import *
@@ -29,6 +28,7 @@ if __name__ == "__main__":
     # Conversion unités
     data["P"] = data["PSTAT"]
 
+<<<<<<< HEAD
     # Génération de séquences temporelles 
     colonnes_seq = ["T", "U", "P", "FF"]
     print("[INFO] Génération des séquences pour apprentissage séquentiel…")
@@ -36,10 +36,30 @@ if __name__ == "__main__":
     print(f"[INFO] Forme X_seq : {X_seq.shape} | y_seq : {y_seq.shape}")
 
     # Statistiques descriptives
+=======
+    #  Visualisations météo (par heure) A DECOMMENTER
+    boiteAMoustache(data)
+    correlation(data,seuil_corr=0.5)
+    courbe_temperature_par_departement(data)
+    courbes_variables(data)
+    boxplot_temperature(data)
+    boxplot_variable(data)
+    hist_temperature(data)
+    hist_variable(data)
+    
+    # Statistiques descriptives (sur les données horaires)
+>>>>>>> d6ae18b40cb077b79a81cb8a719b3a02925fc5e1
     stats = data.groupby("dep").apply(lambda x: statistiques(x[["T", "U", "P", "FF"]]))
     print("\n[INFO] Statistiques descriptives :\n", stats)
 
-    # ACP
+    # Corrélation par département A DECOMMENTER
+    for dep in data["dep"].unique():
+        print(f"\n[INFO] Corrélation - Département {dep}")
+        heatmap_correlation(data[data["dep"] == dep], dep=dep)
+    print("COLONNES\n : ")
+    data.columns 
+
+    #  ACP 
     features = ["T", "U", "P", "FF"]
     data_clean = data.dropna(subset=features).copy()
     X = StandardScaler().fit_transform(data_clean[features])
@@ -49,7 +69,9 @@ if __name__ == "__main__":
     print(f"\n[INFO] Variance PC1 + PC2 : {explained_var[:2].sum():.2%}")
     print(f"[INFO] Variance PC3 + PC4 : {explained_var[2:4].sum():.2%}")
 
-    # Clustering
+    #  Clustering 
+    # methode_du_coude(X)
+
     kmeans = KMeans(n_clusters=4, random_state=42, n_init='auto')
     data_pca["cluster"] = kmeans.fit_predict(X)
     centres = pd.DataFrame(kmeans.cluster_centers_, columns=features)
